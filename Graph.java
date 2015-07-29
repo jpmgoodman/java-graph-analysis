@@ -6,17 +6,26 @@ public class Graph {
     private int numVertices;
     private int sumDegrees;
     private int numEdges;
+    private int maxDegree;
 
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
         this.numVertices = adjMatrix.length;
         this.sumDegrees = 0;
+        this.maxDegree = 0;
+        int vertexDegree;
 
-        for (int x[] : adjMatrix)
-            for (int y : x)
-                if (y != 0)
+        for (int x[] : adjMatrix) {
+            vertexDegree = 0;
+            for (int y : x) {
+                if (y != 0) {
                     this.sumDegrees++;
-
+                    vertexDegree++;
+                }
+            }
+            if (vertexDegree > this.maxDegree)
+                this.maxDegree = vertexDegree;
+        }
         this.numEdges = this.sumDegrees / 2;
     }
 
@@ -25,16 +34,20 @@ public class Graph {
         return numVertices;
     }
 
-    // returns total sum of degrees in graph.
-    public int getSumDegrees() {
-        return sumDegrees;
-    }
-
     // returns number of edges in graph.
     public int getNumEdges() {
         return numEdges;
     }
 
+    // returns total sum of degrees in graph.
+    public int getSumDegrees() {
+        return sumDegrees;
+    }
+
+    // returns max degree of the graph.
+    public int getMaxDegree() {
+        return maxDegree;
+    }
 
     // loads and returns 2d adjacency matrix from standard in
     private static int[][] loadMatrixFromStdIn() {
@@ -75,6 +88,7 @@ public class Graph {
         Graph g = new Graph(adjMatrix);
         System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         System.out.println("This graph has total degree " + g.getSumDegrees());
+        System.out.println("This graph has max degree " + g.getMaxDegree());
         System.out.println("This graph has " + g.getNumEdges() + " edges.");
     }
 }
