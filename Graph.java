@@ -37,7 +37,7 @@ public class Graph {
 
 
     // loads and returns 2d adjacency matrix from standard in
-    public static int[][] loadMatrixFromStdIn() {
+    private static int[][] loadMatrixFromStdIn() {
         int[][] adjMatrix;
         String stdinLine;
         String[] stdinArray;
