@@ -3,12 +3,12 @@ public class Edge {
     private boolean hasWeight;      // is this a weighted edge?
     private boolean hasDirection;   // does this edge have direction?
     private int weight;             // weight of edge
-    private Vertex v1;              // first vertex of edge
-    private Vertex v2;              // second vertex of edge
+    private int v1;              // first vertex of edge
+    private int v2;              // second vertex of edge
     private boolean v1Tov2;         // directed edge from v1 to v2
 
     // unweighted, undirected edge
-    public Edge(Vertex u, Vertex v) {
+    public Edge(int u, int v) {
         this.hasWeight = false;
         this.hasDirection = false;
         this.v1 = u;
@@ -16,7 +16,7 @@ public class Edge {
     }
 
     // weighted, undirected edge
-    public Edge(Vertex u, Vertex v, int weight) {
+    public Edge(int u, int v, int weight) {
         this.hasWeight = true;
         this.hasDirection = false;
         this.weight = weight;
@@ -25,7 +25,7 @@ public class Edge {
     }
 
     // unweighted, directed edge
-    public Edge(Vertex u, Vertex v, boolean v1Tov2) {
+    public Edge(int u, int v, boolean v1Tov2) {
         this.hasWeight = false;
         this.hasDirection = true;
         this.v1Tov2 = v1Tov2;
@@ -34,7 +34,7 @@ public class Edge {
     }
 
     // weighted, directed edge
-    public Edge(Vertex u, Vertex v, int weight, boolean v1Tov2) {
+    public Edge(int u, int v, int weight, boolean v1Tov2) {
         this.hasWeight = true;
         this.hasDirection = true;
         this.weight = weight;
@@ -44,12 +44,12 @@ public class Edge {
     }
 
     // return first vertex of edge
-    public Vertex v1() {
+    public int v1() {
         return this.v1;
     }
 
     // return second vertex of edge
-    public Vertex v2() {
+    public int v2() {
         return this.v2;
     }
 

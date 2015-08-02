@@ -1,51 +1,68 @@
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Graph {
-    private int[][] adjMatrix;
-    private int numVertices;
-    private int sumDegrees;
-    private int numEdges;
-    private int maxDegree;
+    private int[][] adjMatrix;  // adj matrix; rep1 of graph
+    private ArrayList<ArrayList<Edge>> graph; // vertex array of edge lists; rep2 of graph
 
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
-        this.numVertices = adjMatrix.length;
-        this.sumDegrees = 0;
-        this.maxDegree = 0;
-        int vertexDegree;
+        this.graph = new ArrayList<ArrayList<Edge>>();
 
-        for (int x[] : adjMatrix) {
-            vertexDegree = 0;
-            for (int y : x) {
-                if (y != 0) {
-                    this.sumDegrees++;
-                    vertexDegree++;
+        Edge currEdge;
+        ArrayList<Edge> allEdges;
+
+        // iterate over all vertices
+        for (int i = 0; i < adjMatrix.length; i++) {
+            allEdges = new ArrayList<Edge>();
+            // iterate over possible edges from current vertex
+            for (int j = 0; j < adjMatrix[i].length; j++) {
+                if (adjMatrix[i][j] == 0) {
+                    continue;
+                }
+                else if (adjMatrix[i][j] == 1) {
+                    currEdge = new Edge(i, j);
+                    allEdges.add(currEdge);
+                }
+                else {
+                    currEdge = new Edge(i, j, adjMatrix[i][j]);
+                    allEdges.add(currEdge);
                 }
             }
-            if (vertexDegree > this.maxDegree)
-                this.maxDegree = vertexDegree;
+            graph.add(allEdges);
         }
-        this.numEdges = this.sumDegrees / 2;
     }
 
     // returns number of vertices in graph.
     public int getNumVertices() {
-        return numVertices;
+        return adjMatrix.length;
     }
 
     // returns number of edges in graph.
     public int getNumEdges() {
-        return numEdges;
+        return this.getSumDegrees() / 2;
     }
 
     // returns total sum of degrees in graph.
     public int getSumDegrees() {
-        return sumDegrees;
+        int totalDegree = 0;
+
+        for (List<Edge> edgeList : graph)
+            totalDegree += edgeList.size();
+
+        return totalDegree;
     }
 
     // returns max degree of the graph.
     public int getMaxDegree() {
+        int maxDegree = 0;
+
+        for (List<Edge> edgeList : graph)
+            if (edgeList.size() > maxDegree)
+                maxDegree = edgeList.size();
+
         return maxDegree;
     }
 
@@ -68,9 +85,9 @@ public class Graph {
         adjMatrix = new int[dim][dim];
 
         // load adjMatrix
-        for(int i = 0; i < dim; i++) {
+        for (int i = 0; i < dim; i++) {
 
-            for(int j = 0; j < dim; j++)
+            for (int j = 0; j < dim; j++)
                 adjMatrix[i][j] = Integer.parseInt(stdinArray[j]);
 
             if (stdin.hasNextLine()){
