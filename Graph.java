@@ -76,6 +76,17 @@ public class Graph {
         return (dfs.numVisited() == numVertices) ? true : false;
     }
 
+    // how many connected components does this graph have?
+    public int numComps() {
+        
+    }
+
+    /* ACCESSOR METHODS */
+    // return 2D int array representation of graph
+    public int[][] getAdjMatrix() {
+        return this.adjMatrix;
+    }
+
     // return Array List of vertices ("buckets of edges")
     public ArrayList<ArrayList<Edge>> getBuckets() {
         return this.buckets;

@@ -72,5 +72,4 @@ public class Edge {
     private boolean v1Tov2() {
         return this.hasDirection ? this.v1Tov2 : null;
     }
-
 }
