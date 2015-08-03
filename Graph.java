@@ -66,6 +66,7 @@ public class Graph {
 
         return maxDegree;
     }
+
     // is the graph connected?
     public boolean isConnected() {
         int numVertices = this.getNumVertices();
@@ -73,12 +74,24 @@ public class Graph {
             return true;
 
         DFS dfs = new DFS(this, 0);
-        return (dfs.numVisited() == numVertices) ? true : false;
+        return (dfs.getNumVisited() == numVertices) ? true : false;
     }
 
     // how many connected components does this graph have?
     public int numComps() {
-        
+        int numComps = 0;
+        int unvisited = 0;
+        DFS dfs;
+
+        boolean[] visited = new boolean[this.getNumVertices()];
+
+        while ((unvisited = this.remainingVertex(visited)) != -1) {
+            numComps++;
+            dfs = new DFS(this, unvisited);
+            visited = this.mergeVisited(visited, dfs.getVisited());
+        }
+
+        return numComps;
     }
 
     /* ACCESSOR METHODS */
@@ -90,6 +103,34 @@ public class Graph {
     // return Array List of vertices ("buckets of edges")
     public ArrayList<ArrayList<Edge>> getBuckets() {
         return this.buckets;
+    }
+
+    // merges two visited arrays into a single visited array
+    private boolean[] mergeVisited(boolean[] visited1, boolean[] visited2) {
+        if (visited1.length != visited2.length) {
+            System.out.println("Visited array size mismatch.");
+            return null;
+        }
+
+        int numVertices = visited1.length;
+        boolean[] merged = new boolean[numVertices];
+
+        for (int i = 0; i < numVertices; i++)
+            if (visited1[i] == true || visited2[i] == true)
+                merged[i] = true;
+
+        return merged;
+    }
+
+    // checks if visited array is completely true
+    // returns -1 if no remaining vertex to be visited
+    // otherwise, returns index of some remaining vertex
+    private int remainingVertex(boolean[] visited) {
+        for (int i = 0; i < visited.length; i++)
+            if (visited[i] == false)
+                return i;
+
+        return -1;
     }
 
     // loads and returns 2d adjacency matrix from standard in
@@ -135,5 +176,6 @@ public class Graph {
         System.out.println("This graph has max degree " + g.getMaxDegree());
         System.out.println("This graph has " + g.getNumEdges() + " edges.");
         System.out.println("Is this graph connected? " + g.isConnected());
+        System.out.println("How many components does this graph have? " + g.numComps());
     }
 }

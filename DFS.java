@@ -22,12 +22,12 @@ public class DFS {
     }
 
     // returns boolean array of verticies visited in this DFS
-    public boolean[] visited() {
+    public boolean[] getVisited() {
         return visited;
     }
 
     // how many vertices were visited in this DFS?
-    public int numVisited() {
+    public int getNumVisited() {
         return this.numVisited;
     }
 }
