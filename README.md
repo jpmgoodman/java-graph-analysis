@@ -2,13 +2,13 @@
 Library for determining various characteristics about mathematical graphs.
 Given the adjacency matrix for a graph as input, this library has the following functions:
 
-* Undirected, unweighted graphs
-** Determine number of vertices
-** Determine number of edges
-** Determine the total degree of the graph
-** Determine the max degree of the graph
-** Determine if the graph is connected
-** Determine the number of connected components
+**Undirected, unweighted graphs**
+* Determine number of vertices
+* Determine number of edges
+* Determine the total degree of the graph
+* Determine the max degree of the graph
+* Determine if the graph is connected
+* Determine the number of connected components
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this
