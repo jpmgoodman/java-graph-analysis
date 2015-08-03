@@ -65,6 +65,18 @@ public class Graph {
 
         return maxDegree;
     }
+    // is the graph connected?
+    public boolean isConnected() {
+        int numVertices = this.getNumVertices();
+        if (numVertices <= 1)
+            return true;
+
+        boolean[] visited = new boolean[numVertices];
+        int numVisited = 0;
+        dfs(visited, numVisited, 0);
+
+        return (numVisited == numVertices) ? true : false;
+    }
 
     // perform depth first search on given vertex
     private void dfs(boolean[] visited, int numVisited, int vertex) {
