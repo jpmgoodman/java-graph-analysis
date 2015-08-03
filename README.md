@@ -1,5 +1,5 @@
 # java-graph-analysis
-Library for determining various characteristics about mathematical graphs.
+Library for determining various characteristics about graphs / networks.
 Given the adjacency matrix for a graph as input, this library has the following functions:
 
 **Undirected, unweighted graphs**
