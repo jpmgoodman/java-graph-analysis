@@ -5,6 +5,7 @@ Given the adjacency matrix for a graph as input, this library has functions to:
 * Determine number of edges
 * Determine the total degree of the graph
 * Determine the max degree of the graph
+* Determine if the graph is connected
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this

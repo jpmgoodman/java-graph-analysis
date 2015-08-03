@@ -1,7 +1,8 @@
 public class DFS {
-    private boolean[] visited;
-    private int numVisited;
+    private boolean[] visited; // represents vertices that have been visited
+    private int numVisited; // number of vertices that have been visited
 
+    // constructs DFS object, which calls private dfs fn.
     public DFS(Graph graph, int vertex) {
         this.visited = new boolean[graph.getNumVertices()];
         this.numVisited = 0;

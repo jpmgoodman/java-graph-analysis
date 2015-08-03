@@ -7,6 +7,7 @@ public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
     private ArrayList<ArrayList<Edge>> buckets; // vertex array of edge lists; rep2 of graph
 
+    // construct graph, given 2D int adjacency matrix
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
         this.buckets = new ArrayList<ArrayList<Edge>>();
@@ -75,6 +76,7 @@ public class Graph {
         return (dfs.numVisited() == numVertices) ? true : false;
     }
 
+    // return Array List of vertices ("buckets of edges")
     public ArrayList<ArrayList<Edge>> getBuckets() {
         return this.buckets;
     }
@@ -112,6 +114,7 @@ public class Graph {
         return adjMatrix;
     }
 
+    // unit testing
     public static void main(String[] args) throws java.io.IOException {
         int[][] adjMatrix = loadMatrixFromStdIn();
         // unit tests
