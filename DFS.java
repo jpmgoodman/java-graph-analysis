@@ -3,7 +3,7 @@ public class DFS {
     private int numVisited;
 
     public DFS(Graph graph, int vertex) {
-        this.visited = new int[graph.getNumVertices()];
+        this.visited = new boolean[graph.getNumVertices()];
         this.numVisited = 0;
         dfs(graph, vertex);
     }
@@ -13,10 +13,10 @@ public class DFS {
         this.visited[vertex] = true;
         this.numVisited++;
 
-        for (Edge e : graph.get(vertex)) {
+        for (Edge e : graph.getBuckets().get(vertex)) {
             int nextVertex = e.v2();
             if (!this.visited[nextVertex])
-                dfs(nextVertex);
+                dfs(graph, nextVertex);
         }
     }
 

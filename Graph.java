@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
-    private ArrayList<ArrayList<Edge>> graph; // vertex array of edge lists; rep2 of graph
+    private ArrayList<ArrayList<Edge>> buckets; // vertex array of edge lists; rep2 of graph
 
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
-        this.graph = new ArrayList<ArrayList<Edge>>();
+        this.buckets = new ArrayList<ArrayList<Edge>>();
 
         Edge currEdge;
         ArrayList<Edge> allEdges;
@@ -31,7 +31,7 @@ public class Graph {
                     allEdges.add(currEdge);
                 }
             }
-            graph.add(allEdges);
+            buckets.add(allEdges);
         }
     }
 
@@ -49,7 +49,7 @@ public class Graph {
     public int getSumDegrees() {
         int totalDegree = 0;
 
-        for (List<Edge> edgeList : graph)
+        for (List<Edge> edgeList : buckets)
             totalDegree += edgeList.size();
 
         return totalDegree;
@@ -59,7 +59,7 @@ public class Graph {
     public int getMaxDegree() {
         int maxDegree = 0;
 
-        for (List<Edge> edgeList : graph)
+        for (List<Edge> edgeList : buckets)
             if (edgeList.size() > maxDegree)
                 maxDegree = edgeList.size();
 
@@ -71,17 +71,12 @@ public class Graph {
         if (numVertices <= 1)
             return true;
 
-        boolean[] visited = new boolean[numVertices];
-        int numVisited = 0;
-        dfs(visited, numVisited, 0);
+        DFS dfs = new DFS(this, 0);
+        return (dfs.numVisited() == numVertices) ? true : false;
+    }
 
-        System.out.println("=================================");
-        System.out.println("Num visited is " + numVisited);
-        System.out.println("Num vertices is " + numVertices);
-        System.out.println("=================================");
-
-
-        return (numVisited == numVertices) ? true : false;
+    public ArrayList<ArrayList<Edge>> getBuckets() {
+        return this.buckets;
     }
 
     // loads and returns 2d adjacency matrix from standard in
