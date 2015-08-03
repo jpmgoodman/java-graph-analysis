@@ -75,19 +75,13 @@ public class Graph {
         int numVisited = 0;
         dfs(visited, numVisited, 0);
 
+        System.out.println("=================================");
+        System.out.println("Num visited is " + numVisited);
+        System.out.println("Num vertices is " + numVertices);
+        System.out.println("=================================");
+
+
         return (numVisited == numVertices) ? true : false;
-    }
-
-    // perform depth first search on given vertex
-    private void dfs(boolean[] visited, int numVisited, int vertex) {
-        visited[vertex] = true;
-        numVisited++;
-
-        for (Edge e : this.graph.get(vertex)) {
-            int nextVertex = e.v2();
-            if (!visited[nextVertex])
-                dfs(visited, nextVertex, numVisited);
-        }
     }
 
     // loads and returns 2d adjacency matrix from standard in
@@ -131,5 +125,6 @@ public class Graph {
         System.out.println("This graph has total degree " + g.getSumDegrees());
         System.out.println("This graph has max degree " + g.getMaxDegree());
         System.out.println("This graph has " + g.getNumEdges() + " edges.");
+        System.out.println("Is this graph connected? " + g.isConnected());
     }
 }
