@@ -12,9 +12,9 @@ Given the adjacency matrix for a graph as input, this library has the following 
 * Determine if there is a path between vertices u and v
 
 The library contains the following classes:
-*Graph (representation of a graph)
-*Edge (representation of an edge in the graph)
-*DFS (depth first search)
+* Graph (representation of a graph)
+* Edge (representation of an edge in the graph)
+* DFS (depth first search)
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this
