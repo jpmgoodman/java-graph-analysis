@@ -6,17 +6,21 @@ import java.util.ArrayList;
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
     private ArrayList<ArrayList<Edge>> buckets; // vertex array of edge lists; rep2 of graph
+    private int numVertices;
 
     // construct graph, given 2D int adjacency matrix
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
         this.buckets = new ArrayList<ArrayList<Edge>>();
+        this.numVertices = 0;
 
         Edge currEdge;
         ArrayList<Edge> allEdges;
 
         // iterate over all vertices
         for (int i = 0; i < adjMatrix.length; i++) {
+            this.numVertices++;
+
             allEdges = new ArrayList<Edge>();
             // iterate over possible edges from current vertex
             for (int j = 0; j < adjMatrix[i].length; j++) {
@@ -38,7 +42,7 @@ public class Graph {
 
     // returns number of vertices in graph.
     public int getNumVertices() {
-        return adjMatrix.length;
+        return this.numVertices;
     }
 
     // returns number of edges in graph.
@@ -85,13 +89,103 @@ public class Graph {
 
         boolean[] visited = new boolean[this.getNumVertices()];
 
-        while ((unvisited = this.remainingVertex(visited)) != -1) {
+        while ((unvisited = remainingVertex(visited)) != -1) {
             numComps++;
             dfs = new DFS(this, unvisited);
             visited = this.mergeVisited(visited, dfs.getVisited());
         }
 
         return numComps;
+    }
+
+    // checks whether there is a path between vertices u and v.
+    // vertices indexed by an int, 0 thru numVertices - 1.
+    // first row of input adj matrix is vertex 0,
+    // second row of input adj matrix is vertex 1, etc.
+    public boolean existsPath(int u, int v) {
+      int numVertices = this.getNumVertices();
+
+      if (u >= numVertices || v >= numVertices) {
+        System.out.println("One of the input vertices does not exist.");
+        return false;
+      }
+
+      DFS dfs = new DFS(this, u);
+      return dfs.getVisited()[v];
+    }
+
+    // does this graph have a cycle?
+    // Time complexity: |V|
+    public boolean hasCycle() {
+      int numVertices = this.getNumVertices();
+      boolean[] visited = new boolean[numVertices + 1]; // 1 extra space to short circuit; set to true if cycle; OW, false
+
+      for (int i = 0; i < numVertices; i++) {
+        if (visited[i] == true)
+          continue;
+
+        visited = compHasCycles(visited, u);
+
+        // check extra 'cycle' bit to see if method short circuited b/c of cycle
+        if (visited[numVertices] == true)
+          return true;
+      }
+
+
+      return false; // if we reached here, never found cycle
+    }
+
+
+    // does the connected component connected to vertex u have a cycle?
+    private boolean[] compHasCycles(boolean[] visited, int u) {
+
+    }
+
+    // what is the chromatic number of this graph?
+    // that is, what is the minimum amount of colors we can use to
+    // color this graph?
+    public int chromaticNum() {
+
+      /*
+
+
+      ALGORITHM: start with a vertex v, and give it a color. get its neighbors.
+      give first neighbor a different color than v (if there are no other
+      colors, add a color to the list)
+      - take a vertex
+        -as you go thru the neighbors, keep giving same color as previous neighbors
+        unless it's connected to one of the previous neighbors.
+
+
+
+      */
+
+      // MUST BE RECURSIVE
+
+      // BREADTH FIRST SEARCH, USING NEIGHBOR COLORING AS DESCRIBED ABOVE
+
+      // colors represented by a List of Lists of vertices (ints)
+      int numVertices = this.getNumVertices();
+
+      ArrayList<ArrayList<Integer>> colorMap = new ArrayList<ArrayList<Integer>>();
+      boolean[] visited = new boolean[numVertices];
+
+      // iterate over all vertices
+      for (int i = 0; i < numVertices; i++) {
+        if (visited[i] == true)
+          continue;
+
+        ArrayList<Edge> localEdges = buckets.get(i);
+        int numNeighbors = localEdges.size();
+
+        // iterate over current vertices' neighbors
+        for (int j = 0; j < numNeighbors; j++) {
+
+        }
+
+      }
+
+      return -1;
     }
 
     /* ACCESSOR METHODS */
@@ -125,7 +219,7 @@ public class Graph {
     // checks if visited array is completely true
     // returns -1 if no remaining vertex to be visited
     // otherwise, returns index of some remaining vertex
-    private int remainingVertex(boolean[] visited) {
+    private static int remainingVertex(boolean[] visited) {
         for (int i = 0; i < visited.length; i++)
             if (visited[i] == false)
                 return i;
@@ -177,5 +271,6 @@ public class Graph {
         System.out.println("This graph has " + g.getNumEdges() + " edges.");
         System.out.println("Is this graph connected? " + g.isConnected());
         System.out.println("How many components does this graph have? " + g.numComps());
+        System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
     }
 }

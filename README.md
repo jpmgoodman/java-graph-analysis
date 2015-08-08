@@ -9,6 +9,12 @@ Given the adjacency matrix for a graph as input, this library has the following 
 * Determine the max degree of the graph
 * Determine if the graph is connected
 * Determine the number of connected components
+* Determine if there is a path between vertices u and v
+
+The library contains the following classes:
+*Graph (representation of a graph)
+*Edge (representation of an edge in the graph)
+*DFS (depth first search)
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this
