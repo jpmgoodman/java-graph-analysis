@@ -6,7 +6,8 @@ import java.util.ArrayList;
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
     private ArrayList<ArrayList<Edge>> buckets; // vertex array of edge lists; rep2 of graph
-    private int numVertices;
+    private int numVertices; // number of vertices in this graph
+    private boolean[] touched; // keeps track of which vertices have been hit by current alg
 
     // construct graph, given 2D int adjacency matrix
     public Graph(int[][] adjMatrix) {
@@ -118,27 +119,37 @@ public class Graph {
     // Time complexity: |V|
     public boolean hasCycle() {
       int numVertices = this.getNumVertices();
-      boolean[] visited = new boolean[numVertices + 1]; // 1 extra space to short circuit; set to true if cycle; OW, false
+      this.touched = new boolean[numVertices];
 
+      // iterate over all vertices (technically components b.c of if statement)
       for (int i = 0; i < numVertices; i++) {
-        if (visited[i] == true)
+        System.out.println("in hascycle");
+        if (this.touched[i] == true)
           continue;
 
-        visited = compHasCycles(visited, u);
-
-        // check extra 'cycle' bit to see if method short circuited b/c of cycle
-        if (visited[numVertices] == true)
+        if (compHasCycles(i))
           return true;
       }
-
 
       return false; // if we reached here, never found cycle
     }
 
-
     // does the connected component connected to vertex u have a cycle?
-    private boolean[] compHasCycles(boolean[] visited, int u) {
+    private boolean compHasCycles(int u) {
 
+
+      if (this.touched[u] == true) {
+        return true; // hits here if this vertex has been touched (i.e. there's a cycle)
+      }
+
+      this.touched[u] = true;
+
+      for (Edge e : this.getBuckets().get(u)) {
+        int neighbor = e.v2();
+        return compHasCycles(neighbor);
+      }
+
+      return false; // hits here if no neighbors (no cycle yet)
     }
 
     // what is the chromatic number of this graph?
@@ -155,8 +166,6 @@ public class Graph {
       - take a vertex
         -as you go thru the neighbors, keep giving same color as previous neighbors
         unless it's connected to one of the previous neighbors.
-
-
 
       */
 
@@ -265,12 +274,13 @@ public class Graph {
         int[][] adjMatrix = loadMatrixFromStdIn();
         // unit tests
         Graph g = new Graph(adjMatrix);
-        System.out.println("This graph has " + g.getNumVertices() + " vertices.");
-        System.out.println("This graph has total degree " + g.getSumDegrees());
-        System.out.println("This graph has max degree " + g.getMaxDegree());
-        System.out.println("This graph has " + g.getNumEdges() + " edges.");
-        System.out.println("Is this graph connected? " + g.isConnected());
-        System.out.println("How many components does this graph have? " + g.numComps());
-        System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
+        // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
+        // System.out.println("This graph has total degree " + g.getSumDegrees());
+        // System.out.println("This graph has max degree " + g.getMaxDegree());
+        // System.out.println("This graph has " + g.getNumEdges() + " edges.");
+        // System.out.println("Is this graph connected? " + g.isConnected());
+        // System.out.println("How many components does this graph have? " + g.numComps());
+        // System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
+        System.out.println("Is there a cycle? " + g.hasCycle());
     }
 }
