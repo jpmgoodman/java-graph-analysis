@@ -123,33 +123,24 @@ public class Graph {
 
       // iterate over all vertices (technically components b.c of if statement)
       for (int i = 0; i < numVertices; i++) {
-        System.out.println("in hascycle");
         if (this.touched[i] == true)
           continue;
 
-        if (compHasCycles(i))
+        if (compHasCycles(i, -1))
           return true;
       }
 
       return false; // if we reached here, never found cycle
     }
 
-    // does the connected component connected to vertex u have a cycle?
-    private boolean compHasCycles(int u) {
+    // is the graph a tree?
+    public boolean isTree() {
+      return !this.hasCycle() && this.isConnected();
+    }
 
-
-      if (this.touched[u] == true) {
-        return true; // hits here if this vertex has been touched (i.e. there's a cycle)
-      }
-
-      this.touched[u] = true;
-
-      for (Edge e : this.getBuckets().get(u)) {
-        int neighbor = e.v2();
-        return compHasCycles(neighbor);
-      }
-
-      return false; // hits here if no neighbors (no cycle yet)
+    // is the graph a forest?
+    public boolean isForest() {
+      return !this.hasCycle();
     }
 
     // what is the chromatic number of this graph?
@@ -206,6 +197,27 @@ public class Graph {
     // return Array List of vertices ("buckets of edges")
     public ArrayList<ArrayList<Edge>> getBuckets() {
         return this.buckets;
+    }
+
+    // does the connected component connected to vertex u have a cycle?
+    // keep track of previous node too.
+    private boolean compHasCycles(int u, int prev) {
+
+      if (this.touched[u] == true) {
+        return true; // hits here if this vertex has been touched (i.e. there's a cycle)
+      }
+
+      this.touched[u] = true;
+
+      for (Edge e : this.getBuckets().get(u)) {
+        int neighbor = e.v2();
+        if (neighbor == prev)
+          continue;
+        if (compHasCycles(neighbor, u))
+          return true;
+      }
+
+      return false; // hits here if no neighbors (no cycle yet)
     }
 
     // merges two visited arrays into a single visited array

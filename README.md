@@ -10,6 +10,8 @@ Given the adjacency matrix for a graph as input, this library has the following 
 * Determine if the graph is connected
 * Determine the number of connected components
 * Determine if there is a path between vertices u and v
+* Determine if the graph has a cycle
+  * Determine if the graph is a tree or forest
 
 The library contains the following classes:
 * Graph (representation of a graph)
