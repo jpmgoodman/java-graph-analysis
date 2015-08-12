@@ -3,7 +3,7 @@ Library for determining various characteristics about graphs / networks.
 Given the adjacency matrix for a graph as input, this library has the following functions:
 
 
-changes IN THE MIDdDLE SDFgo here
+changes IN THE MIDdDLE SDFgo master here
 
 **Undirected, unweighted graphs**
 * Determine number of vertices
