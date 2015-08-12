@@ -2,9 +2,6 @@
 Library for determining various characteristics about graphs / networks.
 Given the adjacency matrix for a graph as input, this library has the following functions:
 
-HERE IS A TEST COMMENT
-here is another
-
 **Undirected, unweighted graphs**
 * Determine number of vertices
 * Determine number of edges
