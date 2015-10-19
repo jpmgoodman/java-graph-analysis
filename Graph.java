@@ -1,18 +1,26 @@
+/*******************************************************************************
+ * Representation of a simple graph using two different representations:
+ * (1) An adjacency matrix
+ * (2) An ArrayList of ArrayLists of Edges
+ *
+ * Author: Jesse Goodman
+ ******************************************************************************/
+
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
-    private ArrayList<ArrayList<Edge>> buckets; // vertex array of edge lists; rep2 of graph
+    private ArrayList<ArrayList<Edge>> vertices; // vertex array of edge lists; rep2 of graph
+    private ArrayList<Edge> edges; //vertex; should probably be a hashset of edges
     private int numVertices; // number of vertices in this graph
     private boolean[] touched; // keeps track of which vertices have been hit by current alg
 
     // construct graph, given 2D int adjacency matrix
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
-        this.buckets = new ArrayList<ArrayList<Edge>>();
+        this.vertices = new ArrayList<ArrayList<Edge>>();
+        this.edges = new ArrayList<Edge>();
         this.numVertices = 0;
 
         Edge currEdge;
@@ -28,17 +36,46 @@ public class Graph {
                 if (adjMatrix[i][j] == 0) {
                     continue;
                 }
-                else if (adjMatrix[i][j] == 1) {
-                    currEdge = new Edge(i, j);
-                    allEdges.add(currEdge);
-                }
                 else {
                     currEdge = new Edge(i, j, adjMatrix[i][j]);
                     allEdges.add(currEdge);
+                    if (i >= j) // prevent edges being added twice
+                        edges.add(currEdge);
                 }
             }
-            buckets.add(allEdges);
+            vertices.add(allEdges);
         }
+    }
+
+    /* Get minimum spanning tree of graph, using Kruskal's algorithm
+        still a work in progress */
+    public ArrayList<Edge> getMST() {
+        this.touched = new boolean[numVertices];
+
+        ArrayList<Edge> mst = new ArrayList<Edge>();
+        ArrayList<Edge> someList = this.getEdges();
+        Collections.sort(someList);
+
+
+        int numEdges = someList.size();
+        Edge currEdge;
+        int v1;
+        int v2;
+
+        for (int i = 0; i < numEdges; i++) {
+            currEdge = someList.get(i);
+            v1 = currEdge.v1();
+            v2 = currEdge.v2();
+            if (touched[v1] == true && touched[v2] == true)
+                continue;
+
+            mst.add(currEdge);
+            touched[v1] = true;
+            touched[v2] = true;
+        }
+
+        System.out.println(mst);
+        return mst;
     }
 
     // returns number of vertices in graph.
@@ -55,8 +92,8 @@ public class Graph {
     public int getSumDegrees() {
         int totalDegree = 0;
 
-        for (List<Edge> edgeList : buckets)
-            totalDegree += edgeList.size();
+        for (List<Edge> edgeList : vertices)
+        totalDegree += edgeList.size();
 
         return totalDegree;
     }
@@ -65,9 +102,9 @@ public class Graph {
     public int getMaxDegree() {
         int maxDegree = 0;
 
-        for (List<Edge> edgeList : buckets)
-            if (edgeList.size() > maxDegree)
-                maxDegree = edgeList.size();
+        for (List<Edge> edgeList : vertices)
+        if (edgeList.size() > maxDegree)
+        maxDegree = edgeList.size();
 
         return maxDegree;
     }
@@ -76,7 +113,7 @@ public class Graph {
     public boolean isConnected() {
         int numVertices = this.getNumVertices();
         if (numVertices <= 1)
-            return true;
+        return true;
 
         DFS dfs = new DFS(this, 0);
         return (dfs.getNumVisited() == numVertices) ? true : false;
@@ -104,88 +141,101 @@ public class Graph {
     // first row of input adj matrix is vertex 0,
     // second row of input adj matrix is vertex 1, etc.
     public boolean existsPath(int u, int v) {
-      int numVertices = this.getNumVertices();
+        int numVertices = this.getNumVertices();
 
-      if (u >= numVertices || v >= numVertices) {
-        System.out.println("One of the input vertices does not exist.");
-        return false;
-      }
+        if (u >= numVertices || v >= numVertices) {
+            System.out.println("One of the input vertices does not exist.");
+            return false;
+        }
 
-      DFS dfs = new DFS(this, u);
-      return dfs.getVisited()[v];
+        DFS dfs = new DFS(this, u);
+        return dfs.getVisited()[v];
     }
 
     // does this graph have a cycle?
     // Time complexity: |V|
     public boolean hasCycle() {
-      int numVertices = this.getNumVertices();
-      this.touched = new boolean[numVertices];
+        int numVertices = this.getNumVertices();
+        this.touched = new boolean[numVertices];
 
-      // iterate over all vertices (technically components b.c of if statement)
-      for (int i = 0; i < numVertices; i++) {
-        if (this.touched[i] == true)
-          continue;
+        // iterate over all vertices (technically components b.c of if statement)
+        for (int i = 0; i < numVertices; i++) {
+            if (this.touched[i] == true)
+            continue;
 
-        if (compHasCycles(i, -1))
-          return true;
-      }
+            if (compHasCycles(i, -1))
+            return true;
+        }
 
-      return false; // if we reached here, never found cycle
+        return false; // if we reached here, never found cycle
     }
 
     // is the graph a tree?
     public boolean isTree() {
-      return !this.hasCycle() && this.isConnected();
+        return !this.hasCycle() && this.isConnected();
     }
 
     // is the graph a forest?
     public boolean isForest() {
-      return !this.hasCycle();
+        return !this.hasCycle();
     }
+
+    // gets bipartitions of the graph if bipartite. O/w, returns null
+    // bipartitions organized such that vertex is labeled 0 if in one partition,
+    // 1 if in the other
+    // runs in O(|V(G)|) time
+    public boolean[] getBipartitions() {
+        int numVertices = this.getNumVertices();
+        boolean[] visited = new boolean[numVertices];
+        boolean[] bipartitions = new boolean[this.getNumVertices()];
+
+        Queue<Integer> remVertices = new LinkedList<Integer>();
+
+        int currVertex;
+        int nbr;
+        boolean currColor;
+
+        // iterate over all connected components
+        for (int i = 0; i < numVertices; i++) {
+            if (visited[i]) continue;
+
+            bipartitions[i] = true;
+            remVertices.add(i);
+            visited[i] = true;
+
+            // iterate over all vertices connected to vertex i, using BFS
+            while (!remVertices.isEmpty()) {
+                currVertex = remVertices.remove();
+                currColor = bipartitions[currVertex];
+
+                // iterate over neighbors of current vertex
+                for (Edge e : this.getVertices().get(currVertex)) {
+                    nbr = e.v2();
+
+                    if (visited[nbr]) {
+                        if (bipartitions[nbr] != !currColor)
+                            return null;
+                        else
+                            continue;
+                    }
+
+                    remVertices.add(nbr);
+                    visited[nbr] = true;
+
+                    bipartitions[nbr] = !currColor;
+                }
+            }
+        }
+
+        return bipartitions;
+    }
+
 
     // what is the chromatic number of this graph?
     // that is, what is the minimum amount of colors we can use to
     // color this graph?
     public int chromaticNum() {
-
-      /*
-
-
-      ALGORITHM: start with a vertex v, and give it a color. get its neighbors.
-      give first neighbor a different color than v (if there are no other
-      colors, add a color to the list)
-      - take a vertex
-        -as you go thru the neighbors, keep giving same color as previous neighbors
-        unless it's connected to one of the previous neighbors.
-
-      */
-
-      // MUST BE RECURSIVE
-
-      // BREADTH FIRST SEARCH, USING NEIGHBOR COLORING AS DESCRIBED ABOVE
-
-      // colors represented by a List of Lists of vertices (ints)
-      int numVertices = this.getNumVertices();
-
-      ArrayList<ArrayList<Integer>> colorMap = new ArrayList<ArrayList<Integer>>();
-      boolean[] visited = new boolean[numVertices];
-
-      // iterate over all vertices
-      for (int i = 0; i < numVertices; i++) {
-        if (visited[i] == true)
-          continue;
-
-        ArrayList<Edge> localEdges = buckets.get(i);
-        int numNeighbors = localEdges.size();
-
-        // iterate over current vertices' neighbors
-        for (int j = 0; j < numNeighbors; j++) {
-
-        }
-
-      }
-
-      return -1;
+        return -1;
     }
 
     /* ACCESSOR METHODS */
@@ -194,30 +244,37 @@ public class Graph {
         return this.adjMatrix;
     }
 
-    // return Array List of vertices ("buckets of edges")
-    public ArrayList<ArrayList<Edge>> getBuckets() {
-        return this.buckets;
+    // return Array List of vertices ("vertices of edges")
+    public ArrayList<ArrayList<Edge>> getVertices() {
+        return this.vertices;
     }
 
+    // return Array list of edges
+    public ArrayList<Edge> getEdges() {
+        return this.edges;
+    }
+
+    /* PRIVATE HELPER METHODS */
+
     // does the connected component connected to vertex u have a cycle?
-    // keep track of previous node too.
+    // keep track of previous node too. (recursive)
     private boolean compHasCycles(int u, int prev) {
 
-      if (this.touched[u] == true) {
-        return true; // hits here if this vertex has been touched (i.e. there's a cycle)
-      }
+        if (this.touched[u] == true) {
+            return true; // hits here if this vertex has been touched (i.e. there's a cycle)
+        }
 
-      this.touched[u] = true;
+        this.touched[u] = true;
 
-      for (Edge e : this.getBuckets().get(u)) {
-        int neighbor = e.v2();
-        if (neighbor == prev)
-          continue;
-        if (compHasCycles(neighbor, u))
-          return true;
-      }
+        for (Edge e : this.getVertices().get(u)) {
+            int neighbor = e.v2();
+            if (neighbor == prev)
+            continue;
+            if (compHasCycles(neighbor, u))
+            return true;
+        }
 
-      return false; // hits here if no neighbors (no cycle yet)
+        return false; // hits here if no neighbors (no cycle yet)
     }
 
     // merges two visited arrays into a single visited array
@@ -231,8 +288,8 @@ public class Graph {
         boolean[] merged = new boolean[numVertices];
 
         for (int i = 0; i < numVertices; i++)
-            if (visited1[i] == true || visited2[i] == true)
-                merged[i] = true;
+        if (visited1[i] == true || visited2[i] == true)
+        merged[i] = true;
 
         return merged;
     }
@@ -242,8 +299,8 @@ public class Graph {
     // otherwise, returns index of some remaining vertex
     private static int remainingVertex(boolean[] visited) {
         for (int i = 0; i < visited.length; i++)
-            if (visited[i] == false)
-                return i;
+        if (visited[i] == false)
+        return i;
 
         return -1;
     }
@@ -262,7 +319,7 @@ public class Graph {
         dim = stdinArray.length;
 
         if (dim <= 0)
-            return null;
+        return null;
 
         adjMatrix = new int[dim][dim];
 
@@ -270,7 +327,7 @@ public class Graph {
         for (int i = 0; i < dim; i++) {
 
             for (int j = 0; j < dim; j++)
-                adjMatrix[i][j] = Integer.parseInt(stdinArray[j]);
+            adjMatrix[i][j] = Integer.parseInt(stdinArray[j]);
 
             if (stdin.hasNextLine()){
                 stdinLine = stdin.nextLine();
@@ -293,6 +350,25 @@ public class Graph {
         // System.out.println("Is this graph connected? " + g.isConnected());
         // System.out.println("How many components does this graph have? " + g.numComps());
         // System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
-        System.out.println("Is there a cycle? " + g.hasCycle());
+        // System.out.println("Is there a cycle? " + g.hasCycle());
+
+
+        //
+        // for (Edge e : Collections.sort(g.getEdges()))
+        //     System.out.println(e.toString());
+
+        // System.out.println(Collections.sort(g.getEdges(), new ArrayList<Edge>()));
+
+        // boolean[] bipartitions = g.getBipartitions();
+        // if (bipartitions == null) {
+        //     System.out.println("Graph is not bipartite.");
+        // }
+        // else {
+        //     System.out.println("bipartitions are:");
+        //     for (boolean b : bipartitions) {
+        //         System.out.println(b);
+        //     }
+        // }
+
     }
 }

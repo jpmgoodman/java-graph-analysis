@@ -1,4 +1,4 @@
-public class Edge {
+public class Edge implements Comparable<Edge> {
 
     private boolean hasWeight;      // is this a weighted edge?
     private boolean hasDirection;   // does this edge have direction?
@@ -55,7 +55,7 @@ public class Edge {
 
     // is this edge weighted?
     public boolean hasWeight() {
-        return this.hasWeight();
+        return this.hasWeight;
     }
 
     // does this edge have direction?
@@ -64,8 +64,40 @@ public class Edge {
     }
 
     // what is the weight of this edge?
-    public int weight() {
+    public int getWeight() {
         return this.hasWeight ? this.weight : null;
+    }
+
+    // Override
+    public int compareTo(Edge e) {
+        if (!(this.hasWeight() && e.hasWeight()))
+            throw new IllegalArgumentException("Each edge must have a weight.");
+
+        int w1 = this.getWeight();
+        int w2 = e.getWeight();
+
+        if (w1 == w2)
+            return 0;
+        else if (w1 > w2)
+            return 1;
+        else
+            return -1;
+    }
+
+    // String representation of an edge
+    public String toString() {
+        if (this.hasWeight()) {
+            if (this.hasDirection())
+                return "(" + this.v1() + ")" + "-----" + this.getWeight() + "---->" + "(" + this.v2() + ")";
+            else
+                return "(" + this.v1() + ")" + "-----" + this.getWeight() + "-----" + "(" + this.v2() + ")";
+        }
+        else {
+            if (this.hasDirection())
+                return "(" + this.v1() + ")" + "--------->" + "(" + this.v2() + ")";
+            else
+                return "(" + this.v1() + ")" + "----------" + "(" + this.v2() + ")";
+        }
     }
 
     // is the direction of this edge from v1 to v2?

@@ -1,6 +1,6 @@
 # java-graph-analysis
 Library for determining various characteristics about graphs / networks.
-Given the adjacency matrix for a graph as input, this library has the following functions:
+Given the adjacency matrix of a simple graph as input, this library has the following functions:
 
 **Undirected, unweighted graphs**
 * Determine number of vertices
@@ -12,6 +12,7 @@ Given the adjacency matrix for a graph as input, this library has the following 
 * Determine if there is a path between vertices u and v
 * Determine if the graph has a cycle
   * Determine if the graph is a tree or forest
+* Determine if the graph is bipartite
 
 The library contains the following classes:
 * Graph (representation of a graph)
