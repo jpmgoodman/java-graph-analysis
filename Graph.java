@@ -12,7 +12,7 @@ import java.util.*;
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
     private ArrayList<ArrayList<Edge>> vertices; // vertex array of edge lists; rep2 of graph
-    private ArrayList<Edge> edges; //vertex; should probably be a hashset of edges
+    private ArrayList<Edge> edges;
     private int numVertices; // number of vertices in this graph
     private boolean[] touched; // keeps track of which vertices have been hit by current alg
 
@@ -40,7 +40,7 @@ public class Graph {
                     currEdge = new Edge(i, j, adjMatrix[i][j]);
                     allEdges.add(currEdge);
                     if (i >= j) // prevent edges being added twice
-                        edges.add(currEdge);
+                        this.edges.add(currEdge);
                 }
             }
             vertices.add(allEdges);
@@ -306,7 +306,7 @@ public class Graph {
     }
 
     // loads and returns 2d adjacency matrix from standard in
-    private static int[][] loadMatrixFromStdIn() {
+    public static int[][] loadMatrixFromStdIn() {
         int[][] adjMatrix;
         String stdinLine;
         String[] stdinArray;
@@ -340,9 +340,9 @@ public class Graph {
 
     // unit testing
     public static void main(String[] args) throws java.io.IOException {
-        int[][] adjMatrix = loadMatrixFromStdIn();
+        // int[][] adjMatrix = loadMatrixFromStdIn();
         // unit tests
-        Graph g = new Graph(adjMatrix);
+        // Graph g = new Graph(adjMatrix);
         // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());
         // System.out.println("This graph has max degree " + g.getMaxDegree());
@@ -370,5 +370,7 @@ public class Graph {
         //     }
         // }
 
+        ArrayList<HashSet<ArrayList<Edge>>> levels = new ArrayList<HashSet<ArrayList<Edge>>>();
+        levels.get(0);
     }
 }

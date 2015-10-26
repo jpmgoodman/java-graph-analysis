@@ -63,12 +63,18 @@ public class Edge implements Comparable<Edge> {
         return this.hasDirection;
     }
 
+    // what is the direction of this edge?
+    // true if v1 --> v2, o/w false
+    public boolean getDirection() {
+        return this.v1Tov2();
+    }
+
     // what is the weight of this edge?
     public int getWeight() {
         return this.hasWeight ? this.weight : null;
     }
 
-    // Override
+    @ Override
     public int compareTo(Edge e) {
         if (!(this.hasWeight() && e.hasWeight()))
             throw new IllegalArgumentException("Each edge must have a weight.");
@@ -82,6 +88,31 @@ public class Edge implements Comparable<Edge> {
             return 1;
         else
             return -1;
+    }
+
+    @ Override
+    public int hashCode() {
+        int v1 = this.v1();
+        int v2 = this.v2();
+        // map two integers into one via cantor pairing fn
+        // this way we can check if edges are equal by the vertices they connect
+        return (int) ((0.5) * (v1 + v2) * (v1 + v2 + 1) + v2);
+    }
+
+    @ Override
+    public boolean equals(Object e) {
+        Edge e2 = (Edge) e;
+
+        if (this.v1() != e2.v1() || this.v2() != e2.v2())
+            return false;
+
+        if (e2.hasDirection && (this.getDirection() != e2.getDirection()))
+            return false;
+
+        if (e2.hasWeight && (this.getWeight() != e2.getWeight()))
+            return false;
+
+        return true;
     }
 
     // String representation of an edge
