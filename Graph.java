@@ -47,6 +47,41 @@ public class Graph {
         }
     }
 
+    // convert adj matrix representation of a graph into the adjacency lists
+    // representation of a graph
+    public static ArrayList<ArrayList<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<ArrayList<Edge>>();
+        ArrayList<Edge> currVertex;
+
+        // iterate over rows
+        for (int i = 0; i < adjMatrix.length; i++) {
+                currVertex = new ArrayList<Edge>();
+                // iterate over elements in row i
+                for (int j = 0; j < adjMatrix[i].length; j++) {
+                    if (adjMatrix[i][j] != 0) {
+                        currVertex.add(new Edge(i,j));
+                    }
+                }
+                graph.add(currVertex);
+        }
+
+        return graph;
+    }
+
+    // convert adjanceny lists representation of a graph into adj matrix
+    // representation of a graph
+    public static int[][] adjListsToAdjMatrix(ArrayList<ArrayList<Edge>> graph) {
+        int[][] adjMatrix = new int[graph.size()][graph.size()];
+        ArrayList<Edge> currVertex;
+        for (int i = 0; i < graph.size(); i++) {
+            currVertex = graph.get(i);
+            for (Edge e : currVertex) {
+                adjMatrix[i][e.v2()] = 1;
+            }
+        }
+        return adjMatrix;
+    }
+
     /* Get minimum spanning tree of graph, using Kruskal's algorithm
         still a work in progress */
     public ArrayList<Edge> getMST() {
