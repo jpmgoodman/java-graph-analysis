@@ -184,7 +184,10 @@ public class hopcroftKarp {
     private ArrayList<Edge> findAugPath(ArrayList<Edge> acc) {
         ArrayList<Edge> path = acc;
         int lvl = path.size() - 1;
-        this.gHat.get(lvl);
+        // iterate over vertices
+        for (Entry<Integer,ArrayList<Edge>> : this.gHat.get(lvl)) {
+
+        }
     }
 
     // M' = M (+) A1 (+) A2 (+) ... (+) An, where Ai is a min augmenting path
