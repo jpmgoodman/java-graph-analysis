@@ -12,7 +12,7 @@ public class RandomGraph {
     // get random general graph with n vertices
     // each pair of vertices has a probability p of being adjacent
     // assume probability is significant to one digit;
-    public static ArrayList<ArrayList<Edge>> getBipartite(int n, float p) {
+    public static Graph getBipartite(int n, float p) {
         if (p > 1 || p < 0) return null; // cannot have invalid probability
         int pAdj = (int) p*10; // probability will be a number btw 0 and 10
 
@@ -21,13 +21,13 @@ public class RandomGraph {
 
         int sp1 = 1 + random.nextInt(n-1); // size of partition 1, btw [1,n-1]
 
-        ArrayList<ArrayList<Edge>> graph = new ArrayList<ArrayList<Edge>>();
+        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
 
-        ArrayList<Edge> v;
-        ArrayList<Edge> u;
+        HashSet<Edge> v;
+        HashSet<Edge> u;
 
         for (int remVertices = n; remVertices > 0; remVertices--) {
-            graph.add(new ArrayList<Edge>());
+            graph.add(new HashSet<Edge>());
         }
 
         // iterate over all possible edges from p1 to p2
@@ -47,43 +47,49 @@ public class RandomGraph {
             }
         }
 
-        return graph;
+        return new Graph(Graph.adjListsToAdjMatrix(graph));
     }
 
 
     // get random general graph with n vertices and m edges
-    public static ArrayList<ArrayList<Edge>> getGeneral(int n, int m) {
+    public static Graph getGeneral(int n, int m) {
         Random random = new Random();
         // graph must be simple; m > (n(n-1))/2 is more edges than in a
         // complete graph on n vertices
         if (m > (n*(n-1))/2) return null;
 
-        ArrayList<ArrayList<Edge>> graph = new ArrayList<ArrayList<Edge>>();
+        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
 
         // add vertices
         for (int i = n; i > 0; i--) {
-            graph.add(new ArrayList<Edge>());
+            graph.add(new HashSet<Edge>());
         }
-        // add random edges
-        for (int remEdges = m; remEdges > 0; remEdges--) {
+
+        while (m > 0) {
             int u = random.nextInt(n);
             int v = random.nextInt(n);
             if ((u == v) || hasNbr(graph.get(u), v)) continue;
 
             graph.get(u).add(new Edge(u, v));
             graph.get(v).add(new Edge(v, u));
+            m--;
         }
 
-        return graph;
+        return new Graph(Graph.adjListsToAdjMatrix(graph));
     }
 
     // does vertex v have vertex u as a neighbor?
-    private static boolean hasNbr(ArrayList<Edge> v, int u) {
+    private static boolean hasNbr(HashSet<Edge> v, int u) {
         for (Edge e : v) {
             if (e.v2() == u) return true;
         }
 
         return false;
+    }
+
+    // unit tests
+    public static void main(String[] args) {
+        RandomGraph rg = new RandomGraph();
     }
 
 }

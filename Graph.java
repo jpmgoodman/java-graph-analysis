@@ -1,36 +1,37 @@
 /*******************************************************************************
- * Representation of a simple graph using two different representations:
- * (1) An adjacency matrix
- * (2) An ArrayList of ArrayLists of Edges
- *
- * Author: Jesse Goodman
- ******************************************************************************/
+* Representation of a simple graph using two different representations:
+* (1) An adjacency matrix
+* (2) An ArrayList of ArrayLists of Edges
+*
+* Author: Jesse Goodman
+******************************************************************************/
 
 import java.io.IOException;
 import java.util.*;
 
 public class Graph {
     private int[][] adjMatrix;  // adj matrix; rep1 of graph
-    private ArrayList<ArrayList<Edge>> vertices; // vertex array of edge lists; rep2 of graph
-    private ArrayList<Edge> edges;
+    private ArrayList<HashSet<Edge>> vertices; // list of buckets (vertices)
+    private HashSet<Edge> edges;
     private int numVertices; // number of vertices in this graph
     private boolean[] touched; // keeps track of which vertices have been hit by current alg
 
     // construct graph, given 2D int adjacency matrix
     public Graph(int[][] adjMatrix) {
         this.adjMatrix = adjMatrix;
-        this.vertices = new ArrayList<ArrayList<Edge>>();
-        this.edges = new ArrayList<Edge>();
+        this.vertices = new ArrayList<HashSet<Edge>>();
+        this.edges = new HashSet<Edge>();
         this.numVertices = 0;
 
         Edge currEdge;
-        ArrayList<Edge> allEdges;
+        HashSet<Edge> allEdges;
 
         // iterate over all vertices
         for (int i = 0; i < adjMatrix.length; i++) {
             this.numVertices++;
 
-            allEdges = new ArrayList<Edge>();
+            allEdges = new HashSet<Edge>();
+
             // iterate over possible edges from current vertex
             for (int j = 0; j < adjMatrix[i].length; j++) {
                 if (adjMatrix[i][j] == 0) {
@@ -40,7 +41,7 @@ public class Graph {
                     currEdge = new Edge(i, j, adjMatrix[i][j]);
                     allEdges.add(currEdge);
                     if (i >= j) // prevent edges being added twice
-                        this.edges.add(currEdge);
+                    this.edges.add(currEdge);
                 }
             }
             vertices.add(allEdges);
@@ -49,20 +50,20 @@ public class Graph {
 
     // convert adj matrix representation of a graph into the adjacency lists
     // representation of a graph
-    public static ArrayList<ArrayList<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
-        ArrayList<ArrayList<Edge>> graph = new ArrayList<ArrayList<Edge>>();
-        ArrayList<Edge> currVertex;
+    public static ArrayList<HashSet<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
+        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
+        HashSet<Edge> currVertex;
 
         // iterate over rows
         for (int i = 0; i < adjMatrix.length; i++) {
-                currVertex = new ArrayList<Edge>();
-                // iterate over elements in row i
-                for (int j = 0; j < adjMatrix[i].length; j++) {
-                    if (adjMatrix[i][j] != 0) {
-                        currVertex.add(new Edge(i,j));
-                    }
+            currVertex = new HashSet<Edge>();
+            // iterate over elements in row i
+            for (int j = 0; j < adjMatrix[i].length; j++) {
+                if (adjMatrix[i][j] != 0) {
+                    currVertex.add(new Edge(i,j));
                 }
-                graph.add(currVertex);
+            }
+            graph.add(currVertex);
         }
 
         return graph;
@@ -70,48 +71,50 @@ public class Graph {
 
     // convert adjanceny lists representation of a graph into adj matrix
     // representation of a graph
-    public static int[][] adjListsToAdjMatrix(ArrayList<ArrayList<Edge>> graph) {
+    public static int[][] adjListsToAdjMatrix(ArrayList<HashSet<Edge>> graph) {
         int[][] adjMatrix = new int[graph.size()][graph.size()];
-        ArrayList<Edge> currVertex;
+        HashSet<Edge> currVertex;
+
         for (int i = 0; i < graph.size(); i++) {
             currVertex = graph.get(i);
             for (Edge e : currVertex) {
                 adjMatrix[i][e.v2()] = 1;
             }
         }
+
         return adjMatrix;
     }
 
     /* Get minimum spanning tree of graph, using Kruskal's algorithm
-        still a work in progress */
-    public ArrayList<Edge> getMST() {
-        this.touched = new boolean[numVertices];
-
-        ArrayList<Edge> mst = new ArrayList<Edge>();
-        ArrayList<Edge> someList = this.getEdges();
-        Collections.sort(someList);
-
-
-        int numEdges = someList.size();
-        Edge currEdge;
-        int v1;
-        int v2;
-
-        for (int i = 0; i < numEdges; i++) {
-            currEdge = someList.get(i);
-            v1 = currEdge.v1();
-            v2 = currEdge.v2();
-            if (touched[v1] == true && touched[v2] == true)
-                continue;
-
-            mst.add(currEdge);
-            touched[v1] = true;
-            touched[v2] = true;
-        }
-
-        System.out.println(mst);
-        return mst;
-    }
+    still a work in progress */
+    // public ArrayList<Edge> getMST() {
+    //     this.touched = new boolean[numVertices];
+    //
+    //     HashSet<Edge> mst = new HashSet<Edge>();
+    //     HashSet<Edge> someList = this.getEdges();
+    //     Collections.sort(someList);
+    //
+    //
+    //     int numEdges = someList.size();
+    //     Edge currEdge;
+    //     int v1;
+    //     int v2;
+    //
+    //     for (int i = 0; i < numEdges; i++) {
+    //         currEdge = someList.get(i);
+    //         v1 = currEdge.v1();
+    //         v2 = currEdge.v2();
+    //         if (touched[v1] == true && touched[v2] == true)
+    //         continue;
+    //
+    //         mst.add(currEdge);
+    //         touched[v1] = true;
+    //         touched[v2] = true;
+    //     }
+    //
+    //     System.out.println(mst);
+    //     return mst;
+    // }
 
     // returns number of vertices in graph.
     public int getNumVertices() {
@@ -127,8 +130,9 @@ public class Graph {
     public int getSumDegrees() {
         int totalDegree = 0;
 
-        for (List<Edge> edgeList : vertices)
-        totalDegree += edgeList.size();
+        for (HashSet<Edge> edgeList : this.vertices) {
+            totalDegree += edgeList.size();
+        }
 
         return totalDegree;
     }
@@ -137,9 +141,10 @@ public class Graph {
     public int getMaxDegree() {
         int maxDegree = 0;
 
-        for (List<Edge> edgeList : vertices)
-        if (edgeList.size() > maxDegree)
-        maxDegree = edgeList.size();
+        for (HashSet<Edge> edgeList : vertices) {
+            if (edgeList.size() > maxDegree)
+                maxDegree = edgeList.size();
+        }
 
         return maxDegree;
     }
@@ -147,8 +152,7 @@ public class Graph {
     // is the graph connected?
     public boolean isConnected() {
         int numVertices = this.getNumVertices();
-        if (numVertices <= 1)
-        return true;
+        if (numVertices <= 1) return true;
 
         DFS dfs = new DFS(this, 0);
         return (dfs.getNumVisited() == numVertices) ? true : false;
@@ -249,9 +253,9 @@ public class Graph {
 
                     if (visited[nbr]) {
                         if (bipartitions[nbr] != !currColor)
-                            return null;
+                        return null;
                         else
-                            continue;
+                        continue;
                     }
 
                     remVertices.add(nbr);
@@ -280,12 +284,12 @@ public class Graph {
     }
 
     // return Array List of vertices ("vertices of edges")
-    public ArrayList<ArrayList<Edge>> getVertices() {
+    public ArrayList<HashSet<Edge>> getVertices() {
         return this.vertices;
     }
 
     // return Array list of edges
-    public ArrayList<Edge> getEdges() {
+    public HashSet<Edge> getEdges() {
         return this.edges;
     }
 
@@ -376,21 +380,26 @@ public class Graph {
     // unit testing
     public static void main(String[] args) throws java.io.IOException {
         // int[][] adjMatrix = loadMatrixFromStdIn();
+
         // unit tests
+        RandomGraph rg = new RandomGraph();
+
         // Graph g = new Graph(adjMatrix);
-        // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
+
+        Graph g = rg.getGeneral(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());
         // System.out.println("This graph has max degree " + g.getMaxDegree());
-        // System.out.println("This graph has " + g.getNumEdges() + " edges.");
+        System.out.println("This graph has " + g.getNumEdges() + " edges.");
         // System.out.println("Is this graph connected? " + g.isConnected());
         // System.out.println("How many components does this graph have? " + g.numComps());
         // System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
         // System.out.println("Is there a cycle? " + g.hasCycle());
 
 
-        //
-        // for (Edge e : Collections.sort(g.getEdges()))
-        //     System.out.println(e.toString());
+
+        for (Edge e : g.getEdges())
+            System.out.println(e.toString());
 
         // System.out.println(Collections.sort(g.getEdges(), new ArrayList<Edge>()));
 
@@ -405,7 +414,7 @@ public class Graph {
         //     }
         // }
 
-        ArrayList<HashSet<ArrayList<Edge>>> levels = new ArrayList<HashSet<ArrayList<Edge>>>();
-        levels.get(0);
+        // ArrayList<HashSet<ArrayList<Edge>>> levels = new ArrayList<HashSet<ArrayList<Edge>>>();
+        // levels.get(0);
     }
 }

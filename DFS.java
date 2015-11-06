@@ -14,7 +14,7 @@ public class DFS {
         this.visited[vertex] = true;
         this.numVisited++;
 
-        for (Edge e : graph.getBuckets().get(vertex)) {
+        for (Edge e : graph.getVertices().get(vertex)) {
             int nextVertex = e.v2();
             if (!this.visited[nextVertex])
                 dfs(graph, nextVertex);
