@@ -14,7 +14,7 @@ public class RandomGraph {
     // assume probability is significant to one digit;
     public static Graph getBipartite(int n, float p) {
         if (p > 1 || p < 0) return null; // cannot have invalid probability
-        int pAdj = (int) p*10; // probability will be a number btw 0 and 10
+        int pAdj = (int) (p*10); // probability will be a number btw 0 and 10
 
         Random random = new Random();
         int randVal;

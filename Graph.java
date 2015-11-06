@@ -386,7 +386,7 @@ public class Graph {
 
         // Graph g = new Graph(adjMatrix);
 
-        Graph g = rg.getGeneral(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        Graph g = rg.getBipartite(Integer.parseInt(args[0]), Float.parseFloat(args[1]));
         System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());
         // System.out.println("This graph has max degree " + g.getMaxDegree());
