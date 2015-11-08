@@ -30,7 +30,7 @@ public class hopcroftKarp {
         this.gHat = new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
         for (Edge e : minAugPathFromGHat())
-            System.out.println(e);
+        System.out.println(e);
 
         // put max matching into global variable
         int result = 1;
@@ -223,7 +223,7 @@ public class hopcroftKarp {
     }
 
     // get symmetric difference of two sets of edges
-    private static HashSet<Edge> symDiff(HashSet<Edge> edges1,
+    public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
     HashSet<Edge> edges2) {
 
         HashSet<Edge> symDiff = new HashSet<Edge>();
@@ -236,7 +236,6 @@ public class hopcroftKarp {
             symDiff.add(e);
         }
         return symDiff;
-
     }
 
     // unit testing
