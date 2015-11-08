@@ -377,29 +377,35 @@ public class Graph {
         return adjMatrix;
     }
 
+    // string representation of graph
+    public String toString() {
+        StringBuilder edges = new StringBuilder();
+        for (Edge e : this.edges) {
+            edges.append(e).append("\n");
+        }
+        return edges.toString();
+    }
+
     // unit testing
     public static void main(String[] args) throws java.io.IOException {
         // int[][] adjMatrix = loadMatrixFromStdIn();
 
         // unit tests
-        RandomGraph rg = new RandomGraph();
+        // RandomGraph rg = new RandomGraph();
 
         // Graph g = new Graph(adjMatrix);
 
-        Graph g = rg.getBipartite(Integer.parseInt(args[0]), Float.parseFloat(args[1]));
-        System.out.println("This graph has " + g.getNumVertices() + " vertices.");
+        // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Float.parseFloat(args[1]));
+        // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());
         // System.out.println("This graph has max degree " + g.getMaxDegree());
-        System.out.println("This graph has " + g.getNumEdges() + " edges.");
+        // System.out.println("This graph has " + g.getNumEdges() + " edges.");
         // System.out.println("Is this graph connected? " + g.isConnected());
         // System.out.println("How many components does this graph have? " + g.numComps());
         // System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
         // System.out.println("Is there a cycle? " + g.hasCycle());
-
-
-
-        for (Edge e : g.getEdges())
-            System.out.println(e.toString());
+        // for (Edge e : g.getEdges())
+            // System.out.println(e.toString());
 
         // System.out.println(Collections.sort(g.getEdges(), new ArrayList<Edge>()));
 

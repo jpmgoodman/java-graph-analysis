@@ -21,6 +21,7 @@ public class hopcroftKarp {
 
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public hopcroftKarp(Graph g) {
+        System.out.println("in constructor");
         this.g = g;
         // is this vertex a girl?
         // thus, false == boys
@@ -33,9 +34,11 @@ public class hopcroftKarp {
         int result = 1;
         // no more than sqrt(|V(G)|) iterations
         while (result > 0) {
+            System.out.println("--in result--");
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
+            System.out.println("NOT NULL");
             result = augmentMatching();
         }
     }
@@ -57,7 +60,7 @@ public class hopcroftKarp {
     // levels are built by filtering neighbrs of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-
+        System.out.println("in set new ghat");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels = new ArrayList<HashMap<Integer, HashSet<Edge>>>();
         boolean[] visited = new boolean[this.g.getNumVertices()];
         boolean foundFreeGirl = false;
@@ -138,6 +141,7 @@ public class hopcroftKarp {
 
     // get a min augmenting path from g hat
     private static HashSet<Edge> minAugPathFromGHat() {
+        System.out.println("in min aug path from ghat");
         augAcc = new HashSet<Edge>(); // reset accumulator global
 
         HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
@@ -190,6 +194,7 @@ public class hopcroftKarp {
     // augmenting paths
     // returns 0 if cannot augment matching
     private int augmentMatching() {
+        System.out.println("in augment matching");
         int timesAugmented = 0;
 
         HashSet<Edge> augPath = minAugPathFromGHat();
@@ -250,21 +255,13 @@ public class hopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
+        System.out.println("in main");
         int[][] adjMatrix = Graph.loadMatrixFromStdIn();
         Graph g = new Graph(adjMatrix);
+        System.out.println(g);
         hopcroftKarp hk = new hopcroftKarp(g);
 
-
         System.out.println(hk);
-
-        //
-        // System.out.println("Max matching size:");
-        // System.out.println(hk.getMaxMatchingSize());
-        // System.out.println();
-        // System.out.println("Illustration:");
-        // for (Edge e : hk.getMaxMatching()) {
-        //     System.out.println(e);
-        // }
     }
 
 }
