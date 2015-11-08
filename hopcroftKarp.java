@@ -38,7 +38,7 @@ public class hopcroftKarp {
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
-            System.out.println("NOT NULL");
+            System.out.println("!!!NOT NULL!!!");
             result = augmentMatching();
         }
     }
@@ -61,12 +61,16 @@ public class hopcroftKarp {
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
         System.out.println("in set new ghat");
-        ArrayList<HashMap<Integer, HashSet<Edge>>> levels = new ArrayList<HashMap<Integer, HashSet<Edge>>>();
+        ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
+        new ArrayList<HashMap<Integer, HashSet<Edge>>>();
+
         boolean[] visited = new boolean[this.g.getNumVertices()];
         boolean foundFreeGirl = false;
 
         // populate first level -- free boys
-        HashMap<Integer, HashSet<Edge>> level_0 = new HashMap<Integer, HashSet<Edge>>();
+        HashMap<Integer, HashSet<Edge>> level_0 =
+        new HashMap<Integer, HashSet<Edge>>();
+
         for (int i = 0; i < partitions.length; i++) {
             if (partitions[i]) continue; // vertex is a girl
             if (matchedVertices[i]) continue; //vertex already matched
@@ -258,7 +262,6 @@ public class hopcroftKarp {
         System.out.println("in main");
         int[][] adjMatrix = Graph.loadMatrixFromStdIn();
         Graph g = new Graph(adjMatrix);
-        System.out.println(g);
         hopcroftKarp hk = new hopcroftKarp(g);
 
         System.out.println(hk);
