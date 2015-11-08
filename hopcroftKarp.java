@@ -29,14 +29,10 @@ public class hopcroftKarp {
         this.matchedVertices = new boolean[this.g.getNumVertices()];
         this.gHat = new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
-        for (Edge e : minAugPathFromGHat())
-        System.out.println(e);
-
         // put max matching into global variable
         int result = 1;
         // no more than sqrt(|V(G)|) iterations
         while (result > 0) {
-            System.out.println(result);
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
@@ -238,11 +234,37 @@ public class hopcroftKarp {
         return symDiff;
     }
 
+
+    // String representation of result
+    public String toString() {
+        StringBuilder edges = new StringBuilder();
+        for (Edge e : this.getMaxMatching()) {
+            edges.append(e).append("\n");
+        }
+        return "--------------------------------------------------\n" +
+        "Max matching size:\n" + this.getMaxMatchingSize() + "\n\n" +
+        "Illustration:\n" +
+        edges +
+        "--------------------------------------------------";
+    }
+
     // unit testing
     public static void main(String[] args) {
-        // int[][] adjMatrix = Graph.loadMatrixFromStdIn();
-        // Graph g = new Graph(adjMatrix);
-        // hopcroftKarp hk = new hopcroftKarp(g);
+        int[][] adjMatrix = Graph.loadMatrixFromStdIn();
+        Graph g = new Graph(adjMatrix);
+        hopcroftKarp hk = new hopcroftKarp(g);
+
+
+        System.out.println(hk);
+
+        //
+        // System.out.println("Max matching size:");
+        // System.out.println(hk.getMaxMatchingSize());
+        // System.out.println();
+        // System.out.println("Illustration:");
+        // for (Edge e : hk.getMaxMatching()) {
+        //     System.out.println(e);
+        // }
     }
 
 }
