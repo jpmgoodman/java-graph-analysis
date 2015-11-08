@@ -13,11 +13,11 @@ public class hopcroftKarp {
     private boolean[] freeBoys; // free vertices in first partition
     private boolean[] partitions;
     private Graph g;
-    private HashSet<Edge> augAcc; // augmenting path accumulator
+    private static HashSet<Edge> augAcc; // augmenting path accumulator
 
     // representation of gHat graph. arraylist of buckets (levels) of vertices
     // each hashmap represents a level. each vertex has a label
-    private ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
+    private static ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
 
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public hopcroftKarp(Graph g) {
@@ -75,7 +75,6 @@ public class hopcroftKarp {
             // found free boy
             HashSet<Edge> freeBoy = new HashSet<Edge>();
             visited[i] = true;
-            prevLevelVertices[i] = true;
 
             // decide which edges to include
             for (Edge e : this.g.getVertices().get(i)) {
@@ -84,7 +83,6 @@ public class hopcroftKarp {
                 if (!maxMatching.contains(e)) freeBoy.add(e);
             }
             level_0.put(i, freeBoy);
-            prevLevelVertices[i] = true;
         }
         // if no free boys left
         if (level_0.size() == 0) return null;
@@ -97,9 +95,9 @@ public class hopcroftKarp {
             HashMap<Integer, HashSet<Edge>> level = new HashMap<Integer, HashSet<Edge>>();
             // get all vertices to put into new level
             // aka, vertices adjacent to vertices from previous level
-            for (HashSet<Edge> v : levels.get(i - 1)) {
+            for (HashSet<Edge> nbrs : levels.get(i-1).values()) {
                 // iterate over neighbors of some vertex in the previous levels
-                for (Edge e : v) {
+                for (Edge e : nbrs) {
                     int vi = e.v2(); // label of current vertex being examined
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
@@ -132,10 +130,10 @@ public class hopcroftKarp {
                             }
                         }
                     }
-                    level.add(vi, newVertex);
+                    level.put(vi, newVertex);
                 }
             }
-            if (level.size == 0) return null;
+            if (level.size() == 0) return null;
 
             levels.add(level);
         }
@@ -144,12 +142,12 @@ public class hopcroftKarp {
 
     // get a min augmenting path from g hat
     private static HashSet<Edge> minAugPathFromGHat() {
-        this.augAcc = new HashSet<Edge>(); // reset accumulator global
+        augAcc = new HashSet<Edge>(); // reset accumulator global
 
-        HashSet<Integer, HashSet<Edge>> freeBoys = this.gHat.get(0);
+        HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
 
-        for (Entry<Integer, HashSet<Edge>> freeBoy : freeBoys) {
-            if (this.hasPathToGirl(freeBoy.getKey(), 0)) {
+        for (int freeBoy : freeBoys.keySet()) {
+            if (hasPathToGirl(freeBoy, 0)) {
                 removeAugPathFromGHat(augAcc);
                 return augAcc;
             }
@@ -166,7 +164,7 @@ public class hopcroftKarp {
         }
 
         // each neighbor of given vertex
-        for (Edge e : this.gHat.get(lvl).get(v)) {
+        for (Edge e : gHat.get(lvl).get(v)) {
             if (hasPathToGirl(e.v2(), lvl+1)) {
                 augAcc.add(e);
                 return true;
@@ -180,9 +178,7 @@ public class hopcroftKarp {
     private static void removeAugPathFromGHat(HashSet<Edge> augPath) {
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
-            for (Entry<Integer, HashSet<Edge>> v : level) {
-                HashSet<Edge> nbrs = v.getValue();
-
+            for (HashSet<Edge> nbrs : level.values()) {
                 for (Edge e : nbrs) {
                     if (augAcc.contains(e)) nbrs.remove(e);
                 }
@@ -248,9 +244,6 @@ public class hopcroftKarp {
         // int[][] adjMatrix = Graph.loadMatrixFromStdIn();
         // Graph g = new Graph(adjMatrix);
         // hopcroftKarp hk = new hopcroftKarp(g);
-
-        HashSet<Edge> ls = new HashSet<Edge>();
-        ls.get(0);
     }
 
 }
