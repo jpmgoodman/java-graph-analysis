@@ -61,6 +61,7 @@ public class hopcroftKarp {
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
         System.out.println("!!!!!!!!in set new ghat!!!!!!!!");
+        System.out.println("=================================================");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
@@ -117,7 +118,6 @@ public class hopcroftKarp {
                         System.out.println(j.v1() + " == to == " + j.v2());
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
-                        System.out.println("uh");
                         // do we want a matching edge for our alternating path?
                         // yes -- odd level
                         if (i % 2 == 1) {
@@ -143,6 +143,7 @@ public class hopcroftKarp {
             levels.add(level);
         }
         gHat = levels;
+        System.out.println("=================================================");
         return levels;
     }
 
@@ -196,10 +197,6 @@ public class hopcroftKarp {
             augPathVs.add(e.v1());
             augPathVs.add(e.v2());
         }
-
-        System.out.println("===================================================");
-        System.out.println(augPathVs);
-        System.out.println("===================================================");
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
 
