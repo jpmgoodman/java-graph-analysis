@@ -13,6 +13,7 @@ public class hopcroftKarp {
     private boolean[] freeBoys; // free vertices in first partition
     private boolean[] partitions;
     private Graph g;
+    private int numGHatsMade;
     private static HashSet<Edge> augAcc; // augmenting path accumulator
 
     // representation of gHat graph. arraylist of buckets (levels) of vertices
@@ -22,6 +23,7 @@ public class hopcroftKarp {
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public hopcroftKarp(Graph g) {
         this.g = g;
+        this.numGHatsMade = 0;
         // is this vertex a girl?
         // thus, false == boys
         this.partitions = g.getBipartitions();
@@ -36,15 +38,12 @@ public class hopcroftKarp {
         int result = 1;
         // no more than sqrt(|V(G)|) iterations
         while (result > 0) {
-            System.out.println("IN HEREEEEE THO");
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
             result = augmentMatching();
-            System.out.println("result is : " + result);
         }
     }
-
 
     // returns the edge set of the max cardinality matching of this graph
     public HashSet<Edge> getMaxMatching() {
@@ -62,7 +61,6 @@ public class hopcroftKarp {
     // levels are built by filtering neighbrs of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-        System.out.println("!!!!!!!!in set new ghat!!!!!!!!");
         System.out.println(maxMatching + "    (matching now)");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
@@ -106,6 +104,7 @@ public class hopcroftKarp {
 
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
+                        System.out.println("FOUND FREE GIRL!: " + vi);
                         foundFreeGirl = true;
                     }
 
@@ -121,7 +120,7 @@ public class hopcroftKarp {
                         System.out.println(j.v1() + " == to == " + j.v2());
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
-                        System.out.println("uh -- checking for  " + j);
+                        System.out.println("***checking for  " + j);
                         // do we want a matching edge for our alternating path?
                         // yes -- odd level
                         Edge mirror_j = new Edge(j.v2(), j.v1(), 1);
@@ -145,9 +144,27 @@ public class hopcroftKarp {
                 return null;
             }
 
-            levels.add(level);
+            // if found girl, remove all edges pointing to a taken girl in
+            // this level; then, reset level
+            if (foundFreeGirl) {
+                for (Map.Entry<Integer, HashSet<Edge>> vertex : levels.get(i-1).entrySet()) {
+                    int v = vertex.getKey();
+                    HashSet<Edge> nbrs = vertex.getValue();
+                    Iterator<Edge> iter = nbrs.iterator();
+                    while (iter.hasNext()) {
+                        Edge e = iter.next();
+                        if (level.containsKey(e.v2())) iter.remove();
+                    }
+                }
+                levels.add(new HashMap<Integer, HashSet<Edge>>());
+            }
+            else {
+                levels.add(level);
+            }
+            // levels.add(level);
         }
         gHat = levels;
+        numGHatsMade++;
         System.out.println(gHat + "         (just generated ghat)");
         return levels;
     }
@@ -273,6 +290,10 @@ public class hopcroftKarp {
         }
     }
 
+    public int getNumGHatsMade() {
+        return this.numGHatsMade;
+    }
+
     // get symmetric difference of two sets of edges
     public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
     HashSet<Edge> edges2) {
@@ -291,7 +312,6 @@ public class hopcroftKarp {
         return symDiff;
     }
 
-
     // String representation of result
     public String toString() {
         StringBuilder edges = new StringBuilder();
@@ -299,6 +319,8 @@ public class hopcroftKarp {
             edges.append(e).append("\n");
         }
         return "--------------------------------------------------\n" +
+        "HOPCROFT-KARP RESULTS:\n" +
+        "--------------------------------------------------\n" +
         "Max matching size:\n" + this.getMaxMatchingSize() + "\n\n" +
         "Illustration:\n" +
         edges +
@@ -307,13 +329,15 @@ public class hopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        Graph g = RandomGraph.getBipartite(20,0.5);
+        Graph g = RandomGraph.getBipartite(100,0.5);
+        // Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
         System.out.println(g);
-        
+
         hopcroftKarp hk = new hopcroftKarp(g);
 
         System.out.println(hk);
+        System.out.println(hk.getNumGHatsMade());
     }
 
 }
