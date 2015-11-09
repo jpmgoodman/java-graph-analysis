@@ -379,21 +379,31 @@ public class Graph {
 
     // string representation of graph
     public String toString() {
+        StringBuilder adjMatrixStr = new StringBuilder();
+        adjMatrixStr.append("**********************************************\n\n");
+        for (int[] row : this.adjMatrix) {
+            for (int entry : row) {
+                adjMatrixStr.append(entry + " ");
+            }
+            adjMatrixStr.append("\n");
+        }
+        adjMatrixStr.append("\n**********************************************\n\n");
         StringBuilder edges = new StringBuilder();
         for (Edge e : this.edges) {
             edges.append(e).append("\n");
         }
-        return edges.toString();
+        edges.append("\n**********************************************");
+        return adjMatrixStr.append(edges).toString();
     }
 
     // unit testing
     public static void main(String[] args) throws java.io.IOException {
-        // int[][] adjMatrix = loadMatrixFromStdIn();
+        int[][] adjMatrix = loadMatrixFromStdIn();
 
         // unit tests
         // RandomGraph rg = new RandomGraph();
 
-        // Graph g = new Graph(adjMatrix);
+        Graph g = new Graph(adjMatrix);
 
         // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Float.parseFloat(args[1]));
         // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
