@@ -14,6 +14,10 @@ Given the adjacency matrix of a simple graph as input, this library has the foll
   * Determine if the graph is a tree or forest
 * Determine if the graph is bipartite
 
+**Bipartite graphs**
+* Determine size of max cardinality matching (Hopcroft-Karp implementation)
+* Determine edge set of max cardinality matching (Hopcroft-Karp implementation)
+
 The library contains the following classes:
 * Graph (representation of a graph)
 * Edge (representation of an edge in the graph)
