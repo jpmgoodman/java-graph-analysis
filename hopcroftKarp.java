@@ -21,11 +21,13 @@ public class hopcroftKarp {
 
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public hopcroftKarp(Graph g) {
-        System.out.println("in constructor");
         this.g = g;
         // is this vertex a girl?
         // thus, false == boys
         this.partitions = g.getBipartitions();
+        if (this.partitions == null) {
+            throw new IllegalArgumentException("Input must be the adjacency matrix of a bipartite graph.");
+        }
         this.maxMatching = new HashSet<Edge>();
         this.matchedVertices = new boolean[this.g.getNumVertices()];
         this.gHat = new ArrayList<HashMap<Integer, HashSet<Edge>>>();
@@ -58,7 +60,7 @@ public class hopcroftKarp {
     // levels are built by filtering neighbrs of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-        System.out.println("in set new ghat");
+        System.out.println("!!!!!!!!in set new ghat!!!!!!!!");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
@@ -70,7 +72,7 @@ public class hopcroftKarp {
         new HashMap<Integer, HashSet<Edge>>();
 
         for (int i = 0; i < partitions.length; i++) {
-            if (partitions[i]) continue; // vertex is a girl
+            if (!partitions[i]) continue; // vertex is a girl
             if (matchedVertices[i]) continue; //vertex already matched
 
             // found free boy
@@ -88,7 +90,6 @@ public class hopcroftKarp {
         // if no free boys left
         if (level_0.size() == 0) return null;
         levels.add(level_0);
-
         // create levels
         for (int i = 1; !foundFreeGirl; i++) {
             HashMap<Integer, HashSet<Edge>> level = new HashMap<Integer, HashSet<Edge>>();
@@ -98,6 +99,7 @@ public class hopcroftKarp {
                 // iterate over neighbors of some vertex in the previous levels
                 for (Edge e : nbrs) {
                     int vi = e.v2(); // label of current vertex being examined
+
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
                         foundFreeGirl = true;
@@ -112,9 +114,10 @@ public class hopcroftKarp {
                     // filter neighbors of vertex in original graph
                     // which neighbors to add to new vertex?
                     for (Edge j : this.g.getVertices().get(vi)) {
+                        System.out.println(j.v1() + " == to == " + j.v2());
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
-
+                        System.out.println("uh");
                         // do we want a matching edge for our alternating path?
                         // yes -- odd level
                         if (i % 2 == 1) {
@@ -133,7 +136,9 @@ public class hopcroftKarp {
                 }
             }
 
-            if (level.size() == 0 && !foundFreeGirl) return null;
+            if (level.size() == 0 && !foundFreeGirl) {
+                return null;
+            }
 
             levels.add(level);
         }
@@ -295,7 +300,6 @@ public class hopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        System.out.println("in main");
         int[][] adjMatrix = Graph.loadMatrixFromStdIn();
         Graph g = new Graph(adjMatrix);
         hopcroftKarp hk = new hopcroftKarp(g);
