@@ -34,7 +34,6 @@ public class hopcroftKarp {
         int result = 1;
         // no more than sqrt(|V(G)|) iterations
         while (result > 0) {
-            System.out.println("--in result--");
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
@@ -138,12 +137,6 @@ public class hopcroftKarp {
 
             levels.add(level);
         }
-        System.out.println("HERE IS NEW GHAT:");
-        for (HashMap<Integer, HashSet<Edge>> lvl : levels) {
-            System.out.print("level: ");
-            System.out.println(lvl);
-        }
-        System.out.println("END NEW GHAT.");
         gHat = levels;
         return levels;
     }
@@ -151,14 +144,17 @@ public class hopcroftKarp {
     // get a min augmenting path from g hat
     private static HashSet<Edge> minAugPathFromGHat() {
         System.out.println("in min aug path from ghat");
-        System.out.println(gHat);
+        // System.out.println(gHat);
         augAcc = new HashSet<Edge>(); // reset accumulator global
 
         HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
 
         for (int freeBoy : freeBoys.keySet()) {
+            // also updates augAcc
             if (hasPathToGirl(freeBoy, 0)) {
+                System.out.println(gHat);
                 removeAugPathFromGHat(augAcc);
+                System.out.println(gHat);
                 return augAcc;
             }
         }
@@ -187,12 +183,42 @@ public class hopcroftKarp {
 
     // remove augPath from ghat (delete edges)
     private static void removeAugPathFromGHat(HashSet<Edge> augPath) {
+        boolean inMatching;
+        HashSet<Integer> augPathVs = new HashSet<Integer>();
+
+        // initialize vertices along augmented path
+        for (Edge e : augPath) {
+            augPathVs.add(e.v1());
+            augPathVs.add(e.v2());
+        }
+
+        System.out.println("===================================================");
+        System.out.println(augPathVs);
+        System.out.println("===================================================");
+
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
-            for (HashSet<Edge> nbrs : level.values()) {
-                Iterator<Edge> iter = nbrs.iterator();
-                while (iter.hasNext()) {
-                    Edge e = iter.next();
-                    if (augAcc.contains(e)) iter.remove();
+
+            Iterator<Map.Entry<Integer, HashSet<Edge>>> iter = level.entrySet().iterator();
+            while (iter.hasNext()) {
+                inMatching = false;
+
+                Map.Entry<Integer, HashSet<Edge>> vertex = iter.next();
+                int v = vertex.getKey();
+
+                // delete all vertices along the aug path
+                HashSet<Edge> nbrs = vertex.getValue();
+                if (augPathVs.contains(v)) {
+                    iter.remove();
+                    continue;
+                }
+
+                // delete all edges with one vertex along the aug path
+                Iterator<Edge> iterE = nbrs.iterator();
+                while (iterE.hasNext()) {
+                    Edge e = iterE.next();
+                    if (augPathVs.contains(e.v2())) {
+                        iterE.remove();
+                    }
                 }
             }
         }
@@ -214,6 +240,7 @@ public class hopcroftKarp {
         // continue until there are no aug paths left in maximal set of
         // minimum augmenting paths
         while (augPath != null) {
+            // System.out.println("--------AUG MATCHING--------");
             timesAugmented++;
             this.maxMatching = symDiff(this.maxMatching, augPath);
             updateMatchedVertices();
@@ -231,7 +258,7 @@ public class hopcroftKarp {
             v1 = e.v1();
             v2 = e.v2();
             this.matchedVertices[v1] = true;
-            this.matchedVertices[v2] = false;
+            this.matchedVertices[v2] = true;
         }
     }
 
