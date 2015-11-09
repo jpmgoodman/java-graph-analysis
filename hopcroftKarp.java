@@ -38,7 +38,6 @@ public class hopcroftKarp {
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
-            System.out.println("!!!NOT NULL!!!");
             result = augmentMatching();
         }
     }
@@ -89,12 +88,10 @@ public class hopcroftKarp {
         }
         // if no free boys left
         if (level_0.size() == 0) return null;
-
         levels.add(level_0);
 
         // create levels
         for (int i = 1; !foundFreeGirl; i++) {
-
             HashMap<Integer, HashSet<Edge>> level = new HashMap<Integer, HashSet<Edge>>();
             // get all vertices to put into new level
             // aka, vertices adjacent to vertices from previous level
@@ -136,16 +133,25 @@ public class hopcroftKarp {
                     level.put(vi, newVertex);
                 }
             }
-            if (level.size() == 0) return null;
+
+            if (level.size() == 0 && !foundFreeGirl) return null;
 
             levels.add(level);
         }
+        System.out.println("HERE IS NEW GHAT:");
+        for (HashMap<Integer, HashSet<Edge>> lvl : levels) {
+            System.out.print("level: ");
+            System.out.println(lvl);
+        }
+        System.out.println("END NEW GHAT.");
+        gHat = levels;
         return levels;
     }
 
     // get a min augmenting path from g hat
     private static HashSet<Edge> minAugPathFromGHat() {
         System.out.println("in min aug path from ghat");
+        System.out.println(gHat);
         augAcc = new HashSet<Edge>(); // reset accumulator global
 
         HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
@@ -163,7 +169,8 @@ public class hopcroftKarp {
 
     // is there a path from vertex v to a free girl? use DFS
     private static boolean hasPathToGirl(int v, int lvl) {
-        if (lvl == gHat.size()) {
+        System.out.println("--hasPathToGirl--(" + v + "," + lvl + ")");
+        if (lvl == gHat.size() - 1) {
             return true;
         }
 
@@ -180,11 +187,12 @@ public class hopcroftKarp {
 
     // remove augPath from ghat (delete edges)
     private static void removeAugPathFromGHat(HashSet<Edge> augPath) {
-
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
             for (HashSet<Edge> nbrs : level.values()) {
-                for (Edge e : nbrs) {
-                    if (augAcc.contains(e)) nbrs.remove(e);
+                Iterator<Edge> iter = nbrs.iterator();
+                while (iter.hasNext()) {
+                    Edge e = iter.next();
+                    if (augAcc.contains(e)) iter.remove();
                 }
             }
         }
@@ -230,6 +238,7 @@ public class hopcroftKarp {
     // get symmetric difference of two sets of edges
     public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
     HashSet<Edge> edges2) {
+        System.out.println("in sym diff");
 
         HashSet<Edge> symDiff = new HashSet<Edge>();
         for (Edge e : edges1) {
