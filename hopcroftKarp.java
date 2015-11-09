@@ -307,8 +307,10 @@ public class hopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        int[][] adjMatrix = Graph.loadMatrixFromStdIn();
-        Graph g = new Graph(adjMatrix);
+        Graph g = RandomGraph.getBipartite(20,0.5);
+        System.out.println("testing on the following graph: ");
+        System.out.println(g);
+        
         hopcroftKarp hk = new hopcroftKarp(g);
 
         System.out.println(hk);

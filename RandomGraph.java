@@ -12,7 +12,7 @@ public class RandomGraph {
     // get random general graph with n vertices
     // each pair of vertices has a probability p of being adjacent
     // assume probability is significant to one digit;
-    public static Graph getBipartite(int n, float p) {
+    public static Graph getBipartite(int n, double p) {
         if (p > 1 || p < 0) return null; // cannot have invalid probability
         int pAdj = (int) (p*10); // probability will be a number btw 0 and 10
 

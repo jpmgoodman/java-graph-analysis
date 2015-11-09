@@ -388,6 +388,22 @@ public class Graph {
             adjMatrixStr.append("\n");
         }
         adjMatrixStr.append("\n**********************************************\n\n");
+
+        boolean[] parts = this.getBipartitions();
+        if (parts != null) {
+            StringBuilder part1 = new StringBuilder("(");
+            StringBuilder part2 = new StringBuilder("(");
+            for (int i = 0; i < parts.length; i++) {
+                if (parts[i]) part1.append("  " + i + "  ");
+                else part2.append("  " + i + "  ");
+            }
+            part1.append(")");
+            part2.append(")");
+            adjMatrixStr.append("Bipartitions:\n");
+            adjMatrixStr.append(part1).append(" , ").append(part2).append("\n\n");
+            adjMatrixStr.append("**********************************************\n\n");
+        }
+
         StringBuilder edges = new StringBuilder();
         for (Edge e : this.edges) {
             edges.append(e).append("\n");
@@ -404,8 +420,8 @@ public class Graph {
         // RandomGraph rg = new RandomGraph();
 
         Graph g = new Graph(adjMatrix);
-
-        // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Float.parseFloat(args[1]));
+        System.out.println(g);
+        // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Double.parseDouble(args[1]));
         // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());
         // System.out.println("This graph has max degree " + g.getMaxDegree());
