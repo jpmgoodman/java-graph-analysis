@@ -36,10 +36,12 @@ public class hopcroftKarp {
         int result = 1;
         // no more than sqrt(|V(G)|) iterations
         while (result > 0) {
+            System.out.println("IN HEREEEEE THO");
             // get another augmenting graph, and then symdiff all new matchings
             // from that grpah into our current matching
             if (setNewGHat() == null) break;
             result = augmentMatching();
+            System.out.println("result is : " + result);
         }
     }
 
@@ -61,7 +63,7 @@ public class hopcroftKarp {
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
         System.out.println("!!!!!!!!in set new ghat!!!!!!!!");
-        System.out.println("=================================================");
+        System.out.println(maxMatching + "    (matching now)");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
@@ -93,6 +95,7 @@ public class hopcroftKarp {
         levels.add(level_0);
         // create levels
         for (int i = 1; !foundFreeGirl; i++) {
+            System.out.println("new level: " + i);
             HashMap<Integer, HashSet<Edge>> level = new HashMap<Integer, HashSet<Edge>>();
             // get all vertices to put into new level
             // aka, vertices adjacent to vertices from previous level
@@ -118,17 +121,19 @@ public class hopcroftKarp {
                         System.out.println(j.v1() + " == to == " + j.v2());
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
+                        System.out.println("uh -- checking for  " + j);
                         // do we want a matching edge for our alternating path?
                         // yes -- odd level
+                        Edge mirror_j = new Edge(j.v2(), j.v1(), 1);
                         if (i % 2 == 1) {
-                            if (maxMatching.contains(e)) {
-                                newVertex.add(e);
+                            if (maxMatching.contains(j) || maxMatching.contains(mirror_j)) {
+                                newVertex.add(j);
                             }
                         }
                         // no
                         else {
-                            if (!maxMatching.contains(e)) {
-                                newVertex.add(e);
+                            if (!maxMatching.contains(j) && !maxMatching.contains(mirror_j)) {
+                                newVertex.add(j);
                             }
                         }
                     }
@@ -143,7 +148,7 @@ public class hopcroftKarp {
             levels.add(level);
         }
         gHat = levels;
-        System.out.println("=================================================");
+        System.out.println(gHat + "         (just generated ghat)");
         return levels;
     }
 
@@ -197,6 +202,10 @@ public class hopcroftKarp {
             augPathVs.add(e.v1());
             augPathVs.add(e.v2());
         }
+
+        System.out.println("===================================================");
+        System.out.println(augPathVs);
+        System.out.println("===================================================");
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
 
@@ -267,15 +276,16 @@ public class hopcroftKarp {
     // get symmetric difference of two sets of edges
     public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
     HashSet<Edge> edges2) {
-        System.out.println("in sym diff");
-
         HashSet<Edge> symDiff = new HashSet<Edge>();
+        Edge mirror;
         for (Edge e : edges1) {
-            if (edges2.contains(e)) continue;
+            mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges2.contains(e) || edges2.contains(mirror)) continue;
             symDiff.add(e);
         }
         for (Edge e : edges2) {
-            if (edges1.contains(e)) continue;
+            mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges1.contains(e) || edges1.contains(mirror)) continue;
             symDiff.add(e);
         }
         return symDiff;

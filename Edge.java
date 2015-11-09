@@ -102,6 +102,7 @@ public class Edge implements Comparable<Edge> {
     @ Override
     public boolean equals(Object e) {
         Edge e2 = (Edge) e;
+        System.out.println(e2);
 
         if (this.v1() != e2.v1() || this.v2() != e2.v2())
             return false;
@@ -109,7 +110,7 @@ public class Edge implements Comparable<Edge> {
         if (e2.hasDirection && (this.getDirection() != e2.getDirection()))
             return false;
 
-        if (e2.hasWeight && (this.getWeight() != e2.getWeight()))
+        if (e2.hasWeight() && (this.getWeight() != e2.getWeight()))
             return false;
 
         return true;
@@ -134,5 +135,10 @@ public class Edge implements Comparable<Edge> {
     // is the direction of this edge from v1 to v2?
     private boolean v1Tov2() {
         return this.hasDirection ? this.v1Tov2 : null;
+    }
+
+    // unit testing
+    public static void main(String[] args) {
+
     }
 }
