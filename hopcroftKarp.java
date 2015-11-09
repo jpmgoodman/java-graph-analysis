@@ -6,7 +6,7 @@
 ******************************************************************************/
 import java.util.*;
 
-public class hopcroftKarp {
+public class HopcroftKarp {
 
     private HashSet<Edge> maxMatching;
     private boolean[] matchedVertices;
@@ -21,7 +21,7 @@ public class hopcroftKarp {
     private static ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
 
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
-    public hopcroftKarp(Graph g) {
+    public HopcroftKarp(Graph g) {
         this.g = g;
         this.numGHatsMade = 0;
         // is this vertex a girl?
@@ -104,7 +104,6 @@ public class hopcroftKarp {
 
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
-                        System.out.println("FOUND FREE GIRL!: " + vi);
                         foundFreeGirl = true;
                     }
 
@@ -329,12 +328,12 @@ public class hopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        Graph g = RandomGraph.getBipartite(100,0.5);
+        Graph g = RandomGraph.getBipartite(10,1);
         // Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
         System.out.println(g);
 
-        hopcroftKarp hk = new hopcroftKarp(g);
+        HopcroftKarp hk = new HopcroftKarp(g);
 
         System.out.println(hk);
         System.out.println(hk.getNumGHatsMade());

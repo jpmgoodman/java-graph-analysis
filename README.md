@@ -22,6 +22,8 @@ The library contains the following classes:
 * Graph (representation of a graph)
 * Edge (representation of an edge in the graph)
 * DFS (depth first search)
+* HopcroftKarp (custom implementation of the Hopcroft-Karp algorithm)
+* RandomGraph (random graph generator)
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this
