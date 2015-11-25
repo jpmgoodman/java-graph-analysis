@@ -69,8 +69,8 @@ public class HopcroftKarp {
     }
 
     // checks if a set of edges is a valid matching (i.e., no repeated vertices)
-    public static boolean isValidMatching(HashSet<Edge> m) {
-        HashSet<Integer> vertices = new HashSet<Integer>(); // visited vertices
+    public static boolean isValidMatching(Collection<Edge> m) {
+        Set<Integer> vertices = new HashSet<Integer>(); // visited vertices
         int u;
         int v;
 
@@ -91,6 +91,9 @@ public class HopcroftKarp {
     }
 
     // checks if a set of edges is a perfect matching (check validity and size)
+    public static boolean isPerfectMatching(Collection<Edge> m, Graph g) {
+        return (isValidMatching(m) && m.size() == ((double) g.getNumVertices())/2);
+    }
 
     // build graph G^hat of G with least
     // G^hat represented as an array list of levels (pools of vertices)
