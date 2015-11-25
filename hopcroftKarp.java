@@ -38,7 +38,8 @@ public class HopcroftKarp {
         // thus, false == boys
         this.partitions = g.getBipartitions();
         if (this.partitions == null) {
-            throw new IllegalArgumentException("Input must be the adjacency matrix of a bipartite graph.");
+            throw new IllegalArgumentException("Input must be the" +
+            " adjacency matrix of a bipartite graph.");
         }
         this.maxMatching = new HashSet<Edge>();
         this.matchedVertices = new boolean[this.g.getNumVertices()];
@@ -56,6 +57,10 @@ public class HopcroftKarp {
 
         // check here to make sure we have a valid matching stored in
         // maxMatching after setting it in constructor
+        if (!isValidMatching(this.maxMatching)) {
+            throw new IllegalStateException("programmer error;" +
+            " somehow created invalid matching.");
+        }
     }
 
     // returns the edge set of the max cardinality matching of this graph
