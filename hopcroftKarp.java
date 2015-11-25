@@ -68,6 +68,30 @@ public class HopcroftKarp {
         return this.maxMatching.size();
     }
 
+    // checks if a set of edges is a valid matching (i.e., no repeated vertices)
+    public static boolean isValidMatching(HashSet<Edge> m) {
+        HashSet<Integer> vertices = new HashSet<Integer>(); // visited vertices
+        int u;
+        int v;
+
+        for (Edge e : m) {
+            u = e.v1();
+            v = e.v2();
+
+            if (vertices.contains(u) || vertices.contains(v)) {
+                return false;
+            }
+            else {
+                vertices.add(u);
+                vertices.add(v);
+            }
+        }
+
+        return true; // didn't find any shared vertices
+    }
+
+    // checks if a set of edges is a perfect matching (check validity and size)
+
     // build graph G^hat of G with least
     // G^hat represented as an array list of levels (pools of vertices)
     // similar to a BFS
