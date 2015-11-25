@@ -3,6 +3,16 @@
 * Time complexity: O(n^(5/2)), where n is the number of vertices in the graph.
 *
 * Author: Jesse Goodman
+
+* Questions - how to tell if multiple g hats will be extracted
+* Avg case # of iterations?
+*
+* Prove max matching by seeing if there are no aug paths left.
+* Test bounds!!!
+* Create validations
+    * graph with PMs (validate size and no shared vertices)
+
+* Average performance for Hopcroft Karp?
 ******************************************************************************/
 import java.util.*;
 
@@ -43,6 +53,9 @@ public class HopcroftKarp {
             if (setNewGHat() == null) break;
             result = augmentMatching();
         }
+
+        // check here to make sure we have a valid matching stored in
+        // maxMatching after setting it in constructor
     }
 
     // returns the edge set of the max cardinality matching of this graph
@@ -179,9 +192,9 @@ public class HopcroftKarp {
         for (int freeBoy : freeBoys.keySet()) {
             // also updates augAcc
             if (hasPathToGirl(freeBoy, 0)) {
-                System.out.println(gHat);
+                // System.out.println(gHat);
                 removeAugPathFromGHat(augAcc);
-                System.out.println(gHat);
+                // System.out.println(gHat);
                 return augAcc;
             }
         }
@@ -219,9 +232,9 @@ public class HopcroftKarp {
             augPathVs.add(e.v2());
         }
 
-        System.out.println("===================================================");
-        System.out.println(augPathVs);
-        System.out.println("===================================================");
+        // System.out.println("===================================================");
+        // System.out.println(augPathVs);
+        // System.out.println("===================================================");
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
 
@@ -328,7 +341,10 @@ public class HopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        Graph g = RandomGraph.getBipartite(10,1);
+        int n = Integer.parseInt(args[0]);
+        double p = Double.parseDouble(args[1]);
+        Graph g = RandomGraph.getPerfectBipartite(n, p);
+        System.out.println("---Done generating perfect bipartite---");
         // Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
         System.out.println(g);
