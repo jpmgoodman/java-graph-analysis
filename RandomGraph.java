@@ -1,15 +1,10 @@
+/*******************************************************************************
+* RandomGraph.java
+* Class to generate random bipartite and general (simple) graphs.
+*
+* Author: Jesse Goodman
+******************************************************************************/
 import java.util.*;
-
-/*
- * RandomGraph.java
- *
- * Class to generate random bipartite and general (simple) graphs.
- * Author: Jesse Goodman
-
-
- * THERES A BUG SOMEWHERE HERE (creating partition of size 0)
-  set same deg vertices all around
- */
 
 public class RandomGraph {
 

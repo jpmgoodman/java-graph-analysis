@@ -9,8 +9,6 @@
 *
 * Prove max matching by seeing if there are no aug paths left.
 * Test bounds!!!
-* Create validations
-    * graph with PMs (validate size and no shared vertices)
 
 * Average performance for Hopcroft Karp?
 ******************************************************************************/
@@ -375,7 +373,7 @@ public class HopcroftKarp {
     public static void main(String[] args) {
         int n = Integer.parseInt(args[0]);
         double p = Double.parseDouble(args[1]);
-        Graph g = RandomGraph.getPerfectBipartite(n, p);
+        Graph g = RandomGraph.getBipartite(n, p);
         System.out.println("---Done generating perfect bipartite---");
         // Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
