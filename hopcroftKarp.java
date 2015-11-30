@@ -82,6 +82,11 @@ public class HopcroftKarp {
             v = e.v2();
 
             if (vertices.contains(u) || vertices.contains(v)) {
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                System.out.println("ERROR!!!");
+                System.out.println("matching already contained " + u + " or " + v);
+                System.out.println(m);
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 return false;
             }
             else {
@@ -101,10 +106,12 @@ public class HopcroftKarp {
     // build graph G^hat of G with least
     // G^hat represented as an array list of levels (pools of vertices)
     // similar to a BFS
-    // levels are built by filtering neighbrs of vertices in original graph
+    // levels are built by filtering neighbors of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-        System.out.println(maxMatching + "    (matching now)");
+        System.out.println("-----------------------CURR MATCHING--------------------------");
+        System.out.println(maxMatching);
+        System.out.println("-----------------------CURR MATCHING--------------------------");
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
@@ -133,6 +140,7 @@ public class HopcroftKarp {
         }
         // if no free boys left
         if (level_0.size() == 0) return null;
+
         levels.add(level_0);
         // create levels
         for (int i = 1; !foundFreeGirl; i++) {
@@ -148,6 +156,7 @@ public class HopcroftKarp {
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
                         foundFreeGirl = true;
+                        System.out.println("FOUND THIS FREE GIRL: " + vi);
                     }
 
                     // once we've found a free girl, no need for any more forward edges
@@ -194,8 +203,11 @@ public class HopcroftKarp {
                     HashSet<Edge> nbrs = vertex.getValue();
                     Iterator<Edge> iter = nbrs.iterator();
                     while (iter.hasNext()) {
-                        Edge e = iter.next();
-                        if (level.containsKey(e.v2())) iter.remove();
+                        Edge e = iter.next();        
+                        if (matchedVertices[e.v2()]) {
+                            System.out.println("remove");
+                            iter.remove();
+                        }
                     }
                 }
                 levels.add(new HashMap<Integer, HashSet<Edge>>());
@@ -203,11 +215,12 @@ public class HopcroftKarp {
             else {
                 levels.add(level);
             }
-            // levels.add(level);
         }
         gHat = levels;
         numGHatsMade++;
-        System.out.println(gHat + "         (just generated ghat)");
+        System.out.println("-----------------------LEVELS--------------------------");
+        System.out.println(levels);
+        System.out.println("-----------------------LEVELS--------------------------");
         return levels;
     }
 
@@ -371,11 +384,10 @@ public class HopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        int n = Integer.parseInt(args[0]);
-        double p = Double.parseDouble(args[1]);
-        Graph g = RandomGraph.getBipartite(n, p);
-        System.out.println("---Done generating perfect bipartite---");
-        // Graph g = new Graph(Graph.loadMatrixFromStdIn());
+        // int n = Integer.parseInt(args[0]);
+        // double p = Double.parseDouble(args[1]);
+        // Graph g = RandomGraph.getPerfectBipartite(n, p);
+        Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
         System.out.println(g);
 
