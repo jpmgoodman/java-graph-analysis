@@ -82,11 +82,6 @@ public class HopcroftKarp {
             v = e.v2();
 
             if (vertices.contains(u) || vertices.contains(v)) {
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                System.out.println("ERROR!!!");
-                System.out.println("matching already contained " + u + " or " + v);
-                System.out.println(m);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 return false;
             }
             else {
@@ -144,7 +139,6 @@ public class HopcroftKarp {
         levels.add(level_0);
         // create levels
         for (int i = 1; !foundFreeGirl; i++) {
-            System.out.println("new level: " + i);
             HashMap<Integer, HashSet<Edge>> level = new HashMap<Integer, HashSet<Edge>>();
             // get all vertices to put into new level
             // aka, vertices adjacent to vertices from previous level
@@ -156,11 +150,10 @@ public class HopcroftKarp {
                     // found free girl
                     if (!matchedVertices[vi] && (i % 2 == 1)) {
                         foundFreeGirl = true;
-                        System.out.println("FOUND THIS FREE GIRL: " + vi);
                     }
 
-                    // once we've found a free girl, no need for any more forward edges
-                    if (foundFreeGirl) continue;
+                    // once we've found a free girl, no need for fwd edges from this lvl
+                    if (foundFreeGirl) break;
 
                     HashSet<Edge> newVertex = new HashSet<Edge>();
                     visited[vi] = true;
@@ -171,7 +164,7 @@ public class HopcroftKarp {
                         System.out.println(j.v1() + " == to == " + j.v2());
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
-                        System.out.println("***checking for  " + j);
+
                         // do we want a matching edge for our alternating path?
                         // yes -- odd level
                         Edge mirror_j = new Edge(j.v2(), j.v1(), 1);
@@ -203,7 +196,7 @@ public class HopcroftKarp {
                     HashSet<Edge> nbrs = vertex.getValue();
                     Iterator<Edge> iter = nbrs.iterator();
                     while (iter.hasNext()) {
-                        Edge e = iter.next();        
+                        Edge e = iter.next();
                         if (matchedVertices[e.v2()]) {
                             System.out.println("remove");
                             iter.remove();
@@ -218,9 +211,11 @@ public class HopcroftKarp {
         }
         gHat = levels;
         numGHatsMade++;
+
         System.out.println("-----------------------LEVELS--------------------------");
         System.out.println(levels);
         System.out.println("-----------------------LEVELS--------------------------");
+
         return levels;
     }
 
@@ -323,7 +318,6 @@ public class HopcroftKarp {
         // continue until there are no aug paths left in maximal set of
         // minimum augmenting paths
         while (augPath != null) {
-            // System.out.println("--------AUG MATCHING--------");
             timesAugmented++;
             this.maxMatching = symDiff(this.maxMatching, augPath);
             updateMatchedVertices();
@@ -384,10 +378,10 @@ public class HopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        // int n = Integer.parseInt(args[0]);
-        // double p = Double.parseDouble(args[1]);
-        // Graph g = RandomGraph.getPerfectBipartite(n, p);
-        Graph g = new Graph(Graph.loadMatrixFromStdIn());
+        int n = Integer.parseInt(args[0]);
+        double p = Double.parseDouble(args[1]);
+        Graph g = RandomGraph.getPerfectBipartite(n, p);
+        // Graph g = new Graph(Graph.loadMatrixFromStdIn());
         System.out.println("testing on the following graph: ");
         System.out.println(g);
 
