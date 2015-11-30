@@ -3,14 +3,8 @@
 * Time complexity: O(n^(5/2)), where n is the number of vertices in the graph.
 *
 * Author: Jesse Goodman
-
-* Questions - how to tell if multiple g hats will be extracted
-* Avg case # of iterations?
 *
 * Prove max matching by seeing if there are no aug paths left.
-* Test bounds!!!
-
-* Average performance for Hopcroft Karp?
 ******************************************************************************/
 import java.util.*;
 
@@ -22,12 +16,42 @@ public class HopcroftKarp {
     private boolean[] partitions;
     private Graph g;
     private int numGHatsMade;
-    private static HashSet<Edge> augAcc; // augmenting path accumulator
+    private HashSet<Edge> augAcc; // augmenting path accumulator
     private static final boolean DEBUG = false; // debug flag
 
     // representation of gHat graph. arraylist of buckets (levels) of vertices
     // each hashmap represents a level. each vertex has a label
-    private static ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
+    private ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
+
+    // does there exist an augmenting path starting from vertex v?
+    private boolean existsAugPath(boolean[] visited, int v, int lenPath) {
+        boolean boy = lenPath % 2 == 0;
+
+        if (visited[v]) return false; // avoid cycles
+
+        if (!boy && !matchedVertices[v] && lenPath > 0) {
+            return true;
+        }
+
+        visited[v] = true;
+
+        if (boy) {
+            for (Edge e : g.getVertices().get(v)) {
+                if (!maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
+                    return true;
+                }
+            }
+        }
+        else {
+            for (Edge e : g.getVertices().get(v)) {
+                if (maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public HopcroftKarp(Graph g) {
@@ -59,6 +83,19 @@ public class HopcroftKarp {
         if (!isValidMatching(this.maxMatching)) {
             throw new IllegalStateException("programmer error;" +
             " somehow created invalid matching.");
+        }
+
+        // check here to make sure we cannot find any more augmenting
+        // paths; that is, make sure our matching is maximum
+        for (int i = 0; i < partitions.length; i++) {
+            if (!partitions[i]) continue; // vertex is a girl
+            // found free boy
+            if (!matchedVertices[i]) {
+                if (existsAugPath(new boolean[partitions.length], i, 0)) {
+                    throw new IllegalStateException("programmer error;" +
+                    " found augmenting path; matching not maximum.");
+                }
+            }
         }
     }
 
@@ -217,7 +254,7 @@ public class HopcroftKarp {
                 levels.add(level);
             }
         }
-        gHat = levels;
+        this.gHat = levels;
         numGHatsMade++;
 
         if (DEBUG) {
@@ -230,14 +267,14 @@ public class HopcroftKarp {
     }
 
     // get a min augmenting path from g hat
-    private static HashSet<Edge> minAugPathFromGHat() {
+    private HashSet<Edge> minAugPathFromGHat() {
 
         if (DEBUG) {
             System.out.println("in min aug path from ghat");
-            System.out.println(gHat);
+            System.out.println(this.gHat);
         }
 
-        augAcc = new HashSet<Edge>(); // reset accumulator global
+        this.augAcc = new HashSet<Edge>(); // reset accumulator global
 
         HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
 
@@ -254,7 +291,7 @@ public class HopcroftKarp {
     }
 
     // is there a path from vertex v to a free girl? use DFS
-    private static boolean hasPathToGirl(int v, int lvl) {
+    private boolean hasPathToGirl(int v, int lvl) {
 
         if (DEBUG)
             System.out.println("--hasPathToGirl--(" + v + "," + lvl + ")");
@@ -266,7 +303,7 @@ public class HopcroftKarp {
         // each neighbor of given vertex
         for (Edge e : gHat.get(lvl).get(v)) {
             if (hasPathToGirl(e.v2(), lvl+1)) {
-                augAcc.add(e);
+                this.augAcc.add(e);
                 return true;
             }
         }
@@ -275,7 +312,7 @@ public class HopcroftKarp {
     }
 
     // remove augPath from ghat (delete edges)
-    private static void removeAugPathFromGHat(HashSet<Edge> augPath) {
+    private void removeAugPathFromGHat(HashSet<Edge> augPath) {
         boolean inMatching;
         HashSet<Integer> augPathVs = new HashSet<Integer>();
 
