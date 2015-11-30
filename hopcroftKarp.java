@@ -23,6 +23,7 @@ public class HopcroftKarp {
     private Graph g;
     private int numGHatsMade;
     private static HashSet<Edge> augAcc; // augmenting path accumulator
+    private static final boolean DEBUG = false; // debug flag
 
     // representation of gHat graph. arraylist of buckets (levels) of vertices
     // each hashmap represents a level. each vertex has a label
@@ -104,9 +105,14 @@ public class HopcroftKarp {
     // levels are built by filtering neighbors of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-        System.out.println("-----------------------CURR MATCHING--------------------------");
-        System.out.println(maxMatching);
-        System.out.println("-----------------------CURR MATCHING--------------------------");
+
+
+        if (DEBUG) {
+            System.out.println("-----------------------CURR MATCHING--------------------------");
+            System.out.println(maxMatching);
+            System.out.println("-----------------------CURR MATCHING--------------------------");
+        }
+
         ArrayList<HashMap<Integer, HashSet<Edge>>> levels =
         new ArrayList<HashMap<Integer, HashSet<Edge>>>();
 
@@ -161,7 +167,10 @@ public class HopcroftKarp {
                     // filter neighbors of vertex in original graph
                     // which neighbors to add to new vertex?
                     for (Edge j : this.g.getVertices().get(vi)) {
-                        System.out.println(j.v1() + " == to == " + j.v2());
+
+                        if (DEBUG)
+                            System.out.println(j.v1() + " == to == " + j.v2());
+
                         int vj = j.v2();
                         if (visited[vj] || foundFreeGirl) continue;
 
@@ -198,7 +207,6 @@ public class HopcroftKarp {
                     while (iter.hasNext()) {
                         Edge e = iter.next();
                         if (matchedVertices[e.v2()]) {
-                            System.out.println("remove");
                             iter.remove();
                         }
                     }
@@ -212,17 +220,23 @@ public class HopcroftKarp {
         gHat = levels;
         numGHatsMade++;
 
-        System.out.println("-----------------------LEVELS--------------------------");
-        System.out.println(levels);
-        System.out.println("-----------------------LEVELS--------------------------");
+        if (DEBUG) {
+            System.out.println("-----------------------LEVELS--------------------------");
+            System.out.println(levels);
+            System.out.println("-----------------------LEVELS--------------------------");
+        }
 
         return levels;
     }
 
     // get a min augmenting path from g hat
     private static HashSet<Edge> minAugPathFromGHat() {
-        System.out.println("in min aug path from ghat");
-        // System.out.println(gHat);
+
+        if (DEBUG) {
+            System.out.println("in min aug path from ghat");
+            System.out.println(gHat);
+        }
+
         augAcc = new HashSet<Edge>(); // reset accumulator global
 
         HashMap<Integer, HashSet<Edge>> freeBoys = gHat.get(0);
@@ -230,9 +244,7 @@ public class HopcroftKarp {
         for (int freeBoy : freeBoys.keySet()) {
             // also updates augAcc
             if (hasPathToGirl(freeBoy, 0)) {
-                // System.out.println(gHat);
                 removeAugPathFromGHat(augAcc);
-                // System.out.println(gHat);
                 return augAcc;
             }
         }
@@ -243,7 +255,10 @@ public class HopcroftKarp {
 
     // is there a path from vertex v to a free girl? use DFS
     private static boolean hasPathToGirl(int v, int lvl) {
-        System.out.println("--hasPathToGirl--(" + v + "," + lvl + ")");
+
+        if (DEBUG)
+            System.out.println("--hasPathToGirl--(" + v + "," + lvl + ")");
+
         if (lvl == gHat.size() - 1) {
             return true;
         }
@@ -270,9 +285,11 @@ public class HopcroftKarp {
             augPathVs.add(e.v2());
         }
 
-        // System.out.println("===================================================");
-        // System.out.println(augPathVs);
-        // System.out.println("===================================================");
+        if (DEBUG) {
+            System.out.println("===================================================");
+            System.out.println(augPathVs);
+            System.out.println("===================================================");
+        }
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
 
@@ -310,7 +327,6 @@ public class HopcroftKarp {
     // augmenting paths
     // returns 0 if cannot augment matching
     private int augmentMatching() {
-        System.out.println("in augment matching");
         int timesAugmented = 0;
 
         HashSet<Edge> augPath = minAugPathFromGHat();
@@ -378,17 +394,26 @@ public class HopcroftKarp {
 
     // unit testing
     public static void main(String[] args) {
-        int n = Integer.parseInt(args[0]);
-        double p = Double.parseDouble(args[1]);
-        Graph g = RandomGraph.getPerfectBipartite(n, p);
-        // Graph g = new Graph(Graph.loadMatrixFromStdIn());
-        System.out.println("testing on the following graph: ");
-        System.out.println(g);
+        Graph g;
+
+        if (args.length == 0) {
+            g = new Graph(Graph.loadMatrixFromStdIn());
+        }
+        else if (args.length == 2) {
+            int n = Integer.parseInt(args[0]);
+            double p = Double.parseDouble(args[1]);
+            g = RandomGraph.getPerfectBipartite(n, p);
+        }
+        else {
+            System.out.println("Please pipe in graph or enter number of " +
+            "vertices and probability of including edges.");
+            return;
+        }
 
         HopcroftKarp hk = new HopcroftKarp(g);
 
         System.out.println(hk);
-        System.out.println(hk.getNumGHatsMade());
+        System.out.println("ghats made: " + hk.getNumGHatsMade());
     }
 
 }

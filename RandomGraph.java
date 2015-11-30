@@ -95,8 +95,7 @@ public class RandomGraph {
             }
         }
 
-        System.out.println("finished getting perf bipartite");
-
+        System.out.println("Finished creating graph.");
         return new Graph(Graph.adjListsToAdjMatrix(graph));
     }
 

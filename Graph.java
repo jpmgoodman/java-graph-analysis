@@ -380,6 +380,8 @@ public class Graph {
     // string representation of graph
     public String toString() {
         StringBuilder adjMatrixStr = new StringBuilder();
+
+        // adjacency matrix representation
         adjMatrixStr.append("**********************************************\n\n");
         for (int[] row : this.adjMatrix) {
             for (int entry : row) {
@@ -389,6 +391,7 @@ public class Graph {
         }
         adjMatrixStr.append("\n**********************************************\n\n");
 
+        // bipartitions
         boolean[] parts = this.getBipartitions();
         if (parts != null) {
             StringBuilder part1 = new StringBuilder("(");
