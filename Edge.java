@@ -102,7 +102,7 @@ public class Edge implements Comparable<Edge> {
     @ Override
     public boolean equals(Object e) {
         Edge e2 = (Edge) e;
-        System.out.println(e2);
+        // System.out.println(e2);
 
         if (this.v1() != e2.v1() || this.v2() != e2.v2())
             return false;

@@ -23,36 +23,6 @@ public class HopcroftKarp {
     // each hashmap represents a level. each vertex has a label
     private ArrayList<HashMap<Integer, HashSet<Edge>>> gHat;
 
-    // does there exist an augmenting path starting from vertex v?
-    private boolean existsAugPath(boolean[] visited, int v, int lenPath) {
-        boolean boy = lenPath % 2 == 0;
-
-        if (visited[v]) return false; // avoid cycles
-
-        if (!boy && !matchedVertices[v] && lenPath > 0) {
-            return true;
-        }
-
-        visited[v] = true;
-
-        if (boy) {
-            for (Edge e : g.getVertices().get(v)) {
-                if (!maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
-                    return true;
-                }
-            }
-        }
-        else {
-            for (Edge e : g.getVertices().get(v)) {
-                if (maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     // run hopcroft karp algorithm for maximum matchings in a bipartite graph
     public HopcroftKarp(Graph g) {
         this.g = g;
@@ -98,6 +68,38 @@ public class HopcroftKarp {
             }
         }
     }
+
+    // does there exist an augmenting path starting from vertex v?
+    private boolean existsAugPath(boolean[] visited, int v, int lenPath) {
+        boolean boy = lenPath % 2 == 0;
+
+        if (visited[v]) return false; // avoid cycles
+
+        if (!boy && !matchedVertices[v] && lenPath > 0) {
+            return true;
+        }
+
+        visited[v] = true;
+
+        if (boy) {
+            for (Edge e : g.getVertices().get(v)) {
+                if (!maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
+                    return true;
+                }
+            }
+        }
+        else {
+            for (Edge e : g.getVertices().get(v)) {
+                if (maxMatching.contains(e) && existsAugPath(visited, e.v2(), lenPath + 1)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 
     // returns the edge set of the max cardinality matching of this graph
     public HashSet<Edge> getMaxMatching() {
@@ -372,7 +374,7 @@ public class HopcroftKarp {
         // minimum augmenting paths
         while (augPath != null) {
             timesAugmented++;
-            this.maxMatching = symDiff(this.maxMatching, augPath);
+            this.maxMatching = Graph.symDiff(this.maxMatching, augPath);
             updateMatchedVertices();
             augPath = minAugPathFromGHat();
         }
@@ -394,24 +396,6 @@ public class HopcroftKarp {
 
     public int getNumGHatsMade() {
         return this.numGHatsMade;
-    }
-
-    // get symmetric difference of two sets of edges
-    public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
-    HashSet<Edge> edges2) {
-        HashSet<Edge> symDiff = new HashSet<Edge>();
-        Edge mirror;
-        for (Edge e : edges1) {
-            mirror = new Edge(e.v2(), e.v1(), 1);
-            if (edges2.contains(e) || edges2.contains(mirror)) continue;
-            symDiff.add(e);
-        }
-        for (Edge e : edges2) {
-            mirror = new Edge(e.v2(), e.v1(), 1);
-            if (edges1.contains(e) || edges1.contains(mirror)) continue;
-            symDiff.add(e);
-        }
-        return symDiff;
     }
 
     // String representation of result
@@ -447,10 +431,14 @@ public class HopcroftKarp {
             return;
         }
 
+        long start = System.nanoTime();
         HopcroftKarp hk = new HopcroftKarp(g);
+        long end = System.nanoTime();
+        long time = (end - start)/1000000;
 
         System.out.println(hk);
-        System.out.println("ghats made: " + hk.getNumGHatsMade());
+        // System.out.println("ghats made: " + hk.getNumGHatsMade());
+        // System.out.println("time: " + time + " ms");
     }
 
 }

@@ -95,7 +95,7 @@ public class RandomGraph {
             }
         }
 
-        System.out.println("Finished creating graph.");
+        // System.out.println("Finished creating graph.");
         return new Graph(Graph.adjListsToAdjMatrix(graph));
     }
 

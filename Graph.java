@@ -269,6 +269,23 @@ public class Graph {
         return bipartitions;
     }
 
+    // get symmetric difference of two sets of edges
+    public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
+    HashSet<Edge> edges2) {
+        HashSet<Edge> symDiff = new HashSet<Edge>();
+        Edge mirror;
+        for (Edge e : edges1) {
+            mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges2.contains(e) || edges2.contains(mirror)) continue;
+            symDiff.add(e);
+        }
+        for (Edge e : edges2) {
+            mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges1.contains(e) || edges1.contains(mirror)) continue;
+            symDiff.add(e);
+        }
+        return symDiff;
+    }
 
     // what is the chromatic number of this graph?
     // that is, what is the minimum amount of colors we can use to
@@ -423,7 +440,7 @@ public class Graph {
         // RandomGraph rg = new RandomGraph();
 
         Graph g = new Graph(adjMatrix);
-        System.out.println(g);
+        // System.out.println(g);
         // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Double.parseDouble(args[1]));
         // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
         // System.out.println("This graph has total degree " + g.getSumDegrees());

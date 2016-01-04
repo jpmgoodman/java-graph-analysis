@@ -98,6 +98,10 @@ public class DisjointSet<T> {
     public static void main(String[] args) {
         DisjointSet<Integer> ds = new DisjointSet<>();
         ds.makeSet(3);
-        System.out.println(ds.isRoot(2));
+        ds.makeSet(6);
+        ds.linkSets(3,6);
+        System.out.println(ds.find(3).data);
+        System.out.println(ds.find(3).rank);
+        System.out.println(ds.isRoot(3));
     }
 }
