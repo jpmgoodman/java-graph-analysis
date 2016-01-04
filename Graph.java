@@ -273,18 +273,33 @@ public class Graph {
     public static HashSet<Edge> symDiff(HashSet<Edge> edges1,
     HashSet<Edge> edges2) {
         HashSet<Edge> symDiff = new HashSet<Edge>();
-        Edge mirror;
+        // Edge mirror;
         for (Edge e : edges1) {
-            mirror = new Edge(e.v2(), e.v1(), 1);
-            if (edges2.contains(e) || edges2.contains(mirror)) continue;
+            // mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges2.contains(e) || edges2.contains(e.rev())) continue;
             symDiff.add(e);
         }
         for (Edge e : edges2) {
-            mirror = new Edge(e.v2(), e.v1(), 1);
-            if (edges1.contains(e) || edges1.contains(mirror)) continue;
+            // mirror = new Edge(e.v2(), e.v1(), 1);
+            if (edges1.contains(e) || edges1.contains(e.rev())) continue;
             symDiff.add(e);
         }
         return symDiff;
+    }
+
+    // check if two matchings are the same, mainly a test method
+    public static boolean equivMatchings(HashSet<Edge> m1, HashSet<Edge> m2) {
+        for (Edge e : m1) {
+            if (!m2.contains(e) && !m2.contains(e.rev())) {
+                return false;
+            }
+        }
+        for (Edge e : m2) {
+            if (!m1.contains(e) && !m1.contains(e.rev())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // what is the chromatic number of this graph?

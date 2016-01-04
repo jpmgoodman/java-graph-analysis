@@ -71,7 +71,23 @@ public class Edge implements Comparable<Edge> {
 
     // what is the weight of this edge?
     public int getWeight() {
-        return this.hasWeight ? this.weight : null;
+        return this.hasWeight() ? this.weight : null;
+    }
+
+    // return the reverse direction of the current edge
+    public Edge rev() {
+        if (this.hasWeight()) {
+            if (this.hasDirection())
+                return new Edge(this.v2(), this.v1(), this.weight, this.v1Tov2);
+            else
+                return new Edge(this.v2(), this.v1(), this.weight);
+        }
+        else {
+            if (this.hasDirection())
+                return new Edge(this.v2(), this.v1(), this.v1Tov2);
+            else
+                return new Edge(this.v2(), this.v1());
+        }
     }
 
     @ Override

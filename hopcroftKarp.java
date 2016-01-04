@@ -99,8 +99,6 @@ public class HopcroftKarp {
         return false;
     }
 
-
-
     // returns the edge set of the max cardinality matching of this graph
     public HashSet<Edge> getMaxMatching() {
         return this.maxMatching;
@@ -144,7 +142,6 @@ public class HopcroftKarp {
     // levels are built by filtering neighbors of vertices in original graph
     // levels will only have edges going forward
     private ArrayList<HashMap<Integer, HashSet<Edge>>> setNewGHat() {
-
 
         if (DEBUG) {
             System.out.println("-----------------------CURR MATCHING--------------------------");
@@ -440,5 +437,4 @@ public class HopcroftKarp {
         // System.out.println("ghats made: " + hk.getNumGHatsMade());
         // System.out.println("time: " + time + " ms");
     }
-
 }
