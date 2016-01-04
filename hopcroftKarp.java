@@ -322,9 +322,9 @@ public class HopcroftKarp {
         }
 
         if (DEBUG) {
-            System.out.println("===================================================");
+            System.out.println("===================================");
             System.out.println(augPathVs);
-            System.out.println("===================================================");
+            System.out.println("===================================");
         }
 
         for (HashMap<Integer, HashSet<Edge>> level : gHat) {
