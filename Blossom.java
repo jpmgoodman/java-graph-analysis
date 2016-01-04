@@ -97,6 +97,7 @@ public class Blossom {
             examined.add(e);
             int w = e.v2();
 
+
             // if w is unlabeled and matched to x,
             // label w[r, odd] and x[r, even]
             if (!labeled[w] && matches[w] != -1) {
@@ -130,17 +131,25 @@ public class Blossom {
                         // examined and not a matching edge
                         for (Edge adj : g.getVertices().get(v)) {
                             if ((examined.contains(adj) || examined.contains(adj.rev())) && !(m.contains(adj) || m.contains(adj.rev()))) {
-                                lineage = adj;
+                                // corner case where two roots have path to a single node
+                                // make sure that we are not adding edge to free vertex that isn't vRoot
+                                if (!(matches[adj.v2()] == -1 && adj.v2() != vRoot)) {
+                                    lineage = adj;
+                                }
+
                             }
                         }
                     }
-
+                    if (lineage == null) {
+                        System.out.println("NULL LINEAGE!");
+                    }
                     augPath.add(lineage);
                     v = lineage.v2(); // go up tree
                 }
 
                 while (w != wRoot) {
                     Edge lineage = null; // edge to parent in tree
+
                     if (evenLvl[w]) {
                         // parent edge must be adjacent matching edge
                         lineage = new Edge(w, matches[w],1);
@@ -150,12 +159,17 @@ public class Blossom {
                         // examined and not a matching edge
                         for (Edge adj : g.getVertices().get(w)) {
                             if ((examined.contains(adj) || examined.contains(adj.rev())) && !(m.contains(adj) || m.contains(adj.rev()))) {
-                                lineage = adj;
+                                // corner case where two roots have path to a single node
+                                // make sure that we are not adding edge to free vertex that isn't wRoot
+                                if (!(matches[adj.v2()] == -1 && adj.v2() != wRoot)) {
+                                    lineage = adj;
+                                }
                             }
                         }
                     }
                     augPath.add(lineage);
                     w = lineage.v2(); // go up tree
+
                 }
                 augPath.add(e); // original e(v,w)
                 break;
@@ -244,7 +258,16 @@ public class Blossom {
         HashSet<Edge> hkMatching = hk.getMaxMatching();
 
         System.out.println(Graph.equivMatchings(hkMatching, bMatching));
-        System.out.println(hkMatching.size() == bMatching.size());
+        int hkSize = hkMatching.size();
+        int bSize = bMatching.size();
+        if (hkSize == bSize) {
+            System.out.println("true");
+        }
+        else {
+            System.out.println("DIFF SIZES!");
+            System.out.println("HK: " + hkSize);
+            System.out.println("B: " + bSize);
+        }
 
         // long start = System.nanoTime();
         // HopcroftKarp hk = new HopcroftKarp(g);
