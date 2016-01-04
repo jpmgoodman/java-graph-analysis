@@ -244,6 +244,7 @@ public class Blossom {
         HashSet<Edge> hkMatching = hk.getMaxMatching();
 
         System.out.println(Graph.equivMatchings(hkMatching, bMatching));
+        System.out.println(hkMatching.size() == bMatching.size());
 
         // long start = System.nanoTime();
         // HopcroftKarp hk = new HopcroftKarp(g);
