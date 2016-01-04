@@ -24,8 +24,6 @@ public class Blossom {
             this.maxMatching = Graph.symDiff(this.maxMatching, augPath);
             updateMatchedVertices();
             augPath = getAugPath(this.graph, this.maxMatching);
-            System.out.println(augPath);
-            // System.out.println(augPath);
         } while (augPath.size() != 0);
 
         // check here to make sure we have a valid matching stored in
@@ -39,8 +37,6 @@ public class Blossom {
     // most important method; finds an augmenting path in G, given a matching M
     private HashSet<Edge> getAugPath(Graph g, HashSet<Edge> m) {
         // NOTE: labeling something means it goes in the alternating forest.
-        System.out.println("****************************************");
-        System.out.println("in get aug path");
         // roots[v] contains root of tree containing vertex v
         boolean[] labeled = new boolean[g.getNumVertices()];
         int[] roots = new int[g.getNumVertices()];
@@ -73,15 +69,11 @@ public class Blossom {
                 freshEvens.add(i);
             }
         }
-        System.out.println(freshEvens.size());
 
         // keep looping until we have no more unexamined edges from even vertices
         while (freshEvens.size() > 0) {
-            System.out.println("freshEvens");
-            System.out.println(freshEvens);
             // choose an unexamined e(v,w) with v:[r, even]
             int v = freshEvens.peek();
-            System.out.println("v: " + v);
             HashSet<Edge> edges = g.getVertices().get(v);
 
             if (edges.size() == 0) {
@@ -98,7 +90,6 @@ public class Blossom {
                 }
             }
             if (e == null) { // not fresh! -- all nbrs examined already
-                System.out.println("NOT FRESH");
                 freshEvens.poll();
                 continue;
             }
@@ -107,13 +98,11 @@ public class Blossom {
             // edge e(v,w) with v labeled [r, even]
             examined.add(e);
             int w = e.v2();
-            System.out.println("w: " + w);
 
             // if w is unlabeled and matched to x,
             // label w[r, odd] and x[r, even]
             if (!labeled[w] && matches[w] != -1) {
                 int x = matches[w];
-                System.out.println("x: " + x);
 
                 labeled[w] = true;
                 roots[w] = roots[v];
@@ -131,63 +120,20 @@ public class Blossom {
             // if w is labeled [s, even] with r != s, we found AUG PATH
             // aug path: roots[v] --> v --> w --> roots[w]
             if (roots[w] != roots[v] && evenLvl[w]) {
-                System.out.println("FOUND AUG PATH");
                 int vRoot = roots[v];
                 int wRoot = roots[w];
 
                 while (v != vRoot) {
-                    // System.out.println("v: " + v);
-                    // System.out.println("vRoot: " + vRoot);
-
-                    // if (evenLvl[v]) {
-                    //     // parent edge must be adjacent matching edge
-                    //     lineage = new Edge(v, matches[v],1);
-                    // }
-                    // else {
-                    //     // parent edge must be adjacent edge that is
-                    //     // examined and not a matching edge
-                    //     for (Edge adj : g.getVertices().get(v)) {
-                    //         if ((examined.contains(adj) || examined.contains(adj.rev())) && !(m.contains(adj) || m.contains(adj.rev()))) {
-                    //             // corner case where two roots have path to a single node
-                    //             // make sure that we are not adding edge to free vertex that isn't vRoot
-                    //             if (!(matches[adj.v2()] == -1 && adj.v2() != vRoot)) {
-                    //                 lineage = adj;
-                    //             }
-                    //         }
-                    //     }
-                    // }
-
                     int parent = parents[v];
                     augPath.add(new Edge(v,parent,1));
                     v = parent; // proceed up tree.
                 }
                 while (w != wRoot) {
-                    // // Edge lineage = null; // edge to parent in tree
-                    //
-                    // if (evenLvl[w]) {
-                    //     // parent edge must be adjacent matching edge
-                    //     lineage = new Edge(w, matches[w],1);
-                    // }
-                    // else {
-                    //     // parent edge must be adjacent edge that is
-                    //     // examined and not a matching edge
-                    //     for (Edge adj : g.getVertices().get(w)) {
-                    //         if ((examined.contains(adj) || examined.contains(adj.rev())) && !(m.contains(adj) || m.contains(adj.rev()))) {
-                    //             // corner case where two roots have path to a single node
-                    //             // make sure that we are not adding edge to free vertex that isn't wRoot
-                    //             if (!(matches[adj.v2()] == -1 && adj.v2() != wRoot)) {
-                    //                 lineage = adj;
-                    //             }
-                    //         }
-                    //     }
-                    // }
-
                     int parent = parents[w];
                     augPath.add(new Edge(w,parent,1));
                     w = parent; // proceed up tree.
                 }
                 augPath.add(e); // original e(v,w)
-                System.out.println("WILL HIT BREAK");
                 break;
             }
 
@@ -195,7 +141,6 @@ public class Blossom {
             if (roots[w] == roots[v] && evenLvl[w]) {
                 // shrink blossom and restart find aug path on shrunken graph
             }
-            // freshEvens.poll();
         }
 
 
@@ -278,14 +223,5 @@ public class Blossom {
         int bSize = bMatching.size();
         System.out.println("HK and Blossom found same size matching?");
         System.out.println(hkSize == bSize);
-
-        // long start = System.nanoTime();
-        // HopcroftKarp hk = new HopcroftKarp(g);
-        // long end = System.nanoTime();
-        // long time = (end - start)/1000000;
-        //
-        // System.out.println(hk);
-        // System.out.println("ghats made: " + hk.getNumGHatsMade());
-        // System.out.println("time: " + time + " ms");
     }
 }
