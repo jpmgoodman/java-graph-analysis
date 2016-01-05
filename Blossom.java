@@ -26,8 +26,8 @@ public class Blossom {
             this.maxMatching = Graph.symDiff(this.maxMatching, augPath);
             updateMatchedVertices();
             augPath = getAugPath(this.graph, this.maxMatching);
-            // System.out.println("augPath:");
-            // System.out.println(augPath);
+            System.out.println("augPath:");
+            System.out.println(augPath);
         } while (augPath.size() != 0);
 
         // check here to make sure we have a valid matching stored in
@@ -143,7 +143,7 @@ public class Blossom {
 
             // if w is labeled [r, even], we found a BLOSSOM
             if (roots[w] == roots[v] && evenLvl[w]) {
-                // System.out.println("CONTRACTING BLOSSOM");
+                System.out.println("CONTRACTING BLOSSOM");
                 this.numContractions++;
                 /* BEGIN BLOSSOM CONTRACTION */
                 // shrink blossom and restart find aug path on shrunken graph
@@ -168,6 +168,8 @@ public class Blossom {
                     }
                 }
 
+                System.out.println("stem: " + stem);
+
                 // stem is now set
                 HashSet<Integer> blossomVs = new HashSet<Integer>();
                 HashSet<Edge> blossomEs = new HashSet<Edge>();
@@ -190,6 +192,8 @@ public class Blossom {
                 }
                 blossomVs.add(stem);
                 blossomEs.add(e); // v----w
+
+                System.out.println(blossomVs);
 
                 // make map that will store blossom vs mapped to their nbrs in the blossom
                 for (Edge be : blossomEs) {
@@ -271,7 +275,12 @@ public class Blossom {
                 /* END BLOSSOM CONTRACTION */
 
                 HashSet<Edge> sAugPath = getAugPath(_g, _m);
-                // System.out.println("sAugPath: " + sAugPath);
+                System.out.println("GOT PATH FROM BELOW");
+                System.out.println("sAugPath: " + sAugPath);
+                // if (sAugPath.contains(new Edge(7,8,1)));
+                // System.out.println("from graph");
+                // System.out.println(_g);
+                // System.out.println();
 
 
                 /* LIFT AUG PATH */
@@ -290,13 +299,16 @@ public class Blossom {
                     }
                     else {
                         liftedPath.add(ape);
+                        System.out.println("add: " + ape);
                     }
                 }
 
-                // System.out.println("in: " + in);
-                // System.out.println("out: " + out);
+                System.out.println("in: " + in);
+                System.out.println("out: " + out);
+
 
                 HashSet<Edge> origEdges = g.getEdges();
+                // System.out.println(origEdges);
 
                 if (in == null && out == null) {
                     return sAugPath;
@@ -387,6 +399,9 @@ public class Blossom {
                         // System.out.println(maybes);
 
                         for (int mv : maybes) {
+                            System.out.println("howdy");
+                            System.out.println("MAYBES");
+                            System.out.println(maybes);
                             HashSet<Edge> augMaybe = new HashSet<Edge>();
                             int currV = mv;
 
@@ -415,6 +430,7 @@ public class Blossom {
 
                                 }
                                 else {
+                                    System.out.println("NO DIRECTION HUH???");
                                     break; // could not find pleasing direction to travel
                                 }
                                 // starting to revisit vertices
@@ -424,7 +440,7 @@ public class Blossom {
                                 }
                                 wantMatched = !wantMatched;
                             }
-                            throw new RuntimeException("This line of code should never be reached");
+                            // throw new RuntimeException("This line of code should never be reached");
                         }
                         // System.out.println("here");
                         // System.out.println("curr lifted path");
@@ -535,9 +551,11 @@ public class Blossom {
                 }
                 // blossom is in middle of aug path
                 else {
-                    // System.out.println("MIDDDDDDDLEE????");
+                    System.out.println("MIDDDDDDDLEE????");
                     int left = in.v1();
+                    System.out.println("left: " + left);
                     int right = out.v2();
+                    System.out.println("right: " + right);
                     boolean inMatched = _m.contains(in) || _m.contains(in.rev());
 
                     // aug path in blossom starts at some starter, ands at some ender
@@ -546,7 +564,6 @@ public class Blossom {
 
                     wantMatched = !inMatched;
 
-                    wantMatched = false;
                     // potential starter (ps) criteria:
                     // matching from left to ps
                     for (int ps : blossomVs) {
@@ -568,6 +585,12 @@ public class Blossom {
                         }
                     }
 
+                    System.out.println("starters");
+                    System.out.println(starters);
+
+                    System.out.println("enders");
+                    System.out.println(enders);
+
                     for (int starter : starters) {
                         HashSet<Edge> augMaybe = new HashSet<Edge>();
                         int currV = starter;
@@ -580,6 +603,8 @@ public class Blossom {
 
                             wantMatched = !wantMatched;
                             currV = startNbr;
+                            System.out.println("ADDING EDGE");
+                            System.out.println(startEdge);
                             augMaybe.add(startEdge);
 
                             while (true) {
@@ -588,8 +613,11 @@ public class Blossom {
                                 if (enders.contains(currV) && (wantMatched != inMatched)) {
                                     for (Edge eam : augMaybe) {
                                         liftedPath.add(eam);
-                                        return liftedPath;
+                                        // return liftedPath;
                                     }
+                                    liftedPath.add(new Edge(left, starter, 1));
+                                    liftedPath.add(new Edge(currV, right, 1));
+                                    return liftedPath;
                                 }
 
                                 if (currV == starter) {
@@ -597,16 +625,19 @@ public class Blossom {
                                 }
 
                                 LinkedList<Integer> currVNbrs = blossomMap.get(currV);
+                                System.out.println("currVNbrs" + currVNbrs);
                                 Edge vNbr1 = new Edge(currV, currVNbrs.get(0),1);
                                 Edge vNbr2 = new Edge(currV, currVNbrs.get(1),1);
 
                                 if (wantMatched == (m.contains(vNbr1) || m.contains(vNbr1.rev()))) {
                                     currV = vNbr1.v2();
                                     augMaybe.add(vNbr1);
+                                    System.out.println("adding" + vNbr1);
                                 }
                                 else if (wantMatched == (m.contains(vNbr2) || m.contains(vNbr2.rev()))) {
                                     currV = vNbr2.v2();
                                     augMaybe.add(vNbr2);
+                                    System.out.println("adding" + vNbr2);
                                 }
                                 else {
                                     // dead end
@@ -624,7 +655,7 @@ public class Blossom {
                 return liftedPath;
             }
         }
-
+        // System.out.println("RETURNING THIS: " + augPath);
         return augPath;
     }
 
@@ -710,7 +741,7 @@ public class Blossom {
             int n = Integer.parseInt(args[0]);
             int m = Integer.parseInt(args[1]);
             g = RandomGraph.getPerfectNonbipartite(n, m);
-            System.out.println(g);
+            // System.out.println(g);
         }
         else {
             System.out.println("Please pipe in graph or enter number of " +
