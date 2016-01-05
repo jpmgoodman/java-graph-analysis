@@ -139,7 +139,105 @@ public class Blossom {
 
             // if w is labeled [r, even], we found a BLOSSOM
             if (roots[w] == roots[v] && evenLvl[w]) {
+                /* BEGIN BLOSSOM CONTRACTION */
                 // shrink blossom and restart find aug path on shrunken graph
+                // get stem
+                int stem = roots[v]; // should always get overridden
+                if (roots[w] != w && roots[v] != v) {
+                    // find most recent common ancestor between v, w: stem
+                    HashSet<Integer> vLineage = new HashSet<Integer>();
+                    int vCopy = v;
+                    int wCopy = w;
+
+                    while (vCopy != roots[v]) {
+                        vLineage.add(vCopy);
+                        vCopy = parents[vCopy];
+                    }
+                    while (wCopy != roots[w]) {
+                        if (vLineage.contains(wCopy)) {
+                            stem = wCopy;
+                            break; // replace stem by lca != root
+                        }
+                        wCopy = parents[wCopy];
+                    }
+                }
+
+                // stem is now set
+                HashSet<Integer> blossomVs = new HashSet<Integer>();
+                HashSet<Edge> blossomEs = new HashSet<Edge>();
+                int vCopy = v;
+                int wCopy = w;
+                int parent;
+                while (vCopy != stem) {
+                    blossomVs.add(vCopy);
+                    parent = parents[vCopy];
+                    blossomEs.add(new Edge(vCopy,parent,1));
+                }
+                while (wCopy != stem) {
+                    blossomVs.add(wCopy);
+                    parent = parents[wCopy];
+                    blossomEs.add(new Edge(wCopy,parent,1));
+                    wCopy = parent;
+                }
+                blossomVs.add(stem);
+                blossomEs.add(e); // v---w
+
+
+                // make copy of G, M
+                // go thru every vertex in blossom Vs. if vertex is
+                // stem should have all edges connected to vertices in blossom, where the edges themselves are not in the blossom.
+                // every other vertex is a component.
+                LinkedList<HashSet<Edge>> vertices = new LinkedList<HashSet<Edge>>();
+                HashSet<Edge> stemList = new HashSet<Edge>();
+                HashSet<Edge> _m = new HashSet<Edge>();
+
+                // load _m, _g (to be obtained from vertices)
+                for (int i = 0; i < g.getNumVertices(); i++) {
+                    HashSet<Edge> vertex = new HashSet<Edge>(); // copy of vertex
+
+                    for (Edge edge : g.getVertices().get(i)) {
+                        int nbr = edge.v2();
+
+                        // this vertex is in the blossom
+                        if (blossomVs.contains(i)) {
+                            if (!blossomVs.contains(nbr)) {
+                                stemList.add(new Edge(stem,nbr,1));
+                            }
+                            // delete edges within blossom
+                        }
+                        // only nbr is in blossom
+                        else if (blossomVs.contains(nbr)) {
+                            vertex.add(new Edge(i,stem,1));
+                            if (m.contains(edge) || m.contains(edge.rev())) {
+                                _m.add(new Edge(i,stem,1));
+                            }
+                        }
+                        // neither vertex is in blossom
+                        else {
+                            vertex.add(new Edge(i,nbr,1));
+                            if (m.contains(edge) || m.contains(edge.rev())) {
+                                _m.add(edge);
+                            }
+                        }
+                    }
+
+                    if (i == stem) {
+                        vertices.add(stemList);
+                    }
+                    else {
+                        vertices.add(vertex);
+                    }
+                }
+
+                Graph _g = new Graph(Graph.adjListsToAdjMatrix(vertices));
+                /* END BLOSSOM CONTRACTION */
+
+                HashSet<Edge> sAugPath = getAugPath(_g, _m);
+
+                /* LIFT AUG PATH */
+                HashSet<Edge> liftedPath = new HashSet<Edge>();
+
+                return liftedPath;
             }
         }
 

@@ -50,8 +50,8 @@ public class Graph {
 
     // convert adj matrix representation of a graph into the adjacency lists
     // representation of a graph
-    public static ArrayList<HashSet<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
-        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
+    public static LinkedList<HashSet<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
+        LinkedList<HashSet<Edge>> graph = new LinkedList<HashSet<Edge>>();
         HashSet<Edge> currVertex;
 
         // iterate over rows
@@ -71,9 +71,11 @@ public class Graph {
 
     // convert adjanceny lists representation of a graph into adj matrix
     // representation of a graph
-    public static int[][] adjListsToAdjMatrix(ArrayList<HashSet<Edge>> graph) {
+    public static int[][] adjListsToAdjMatrix(List<HashSet<Edge>> graph) {
         int[][] adjMatrix = new int[graph.size()][graph.size()];
         HashSet<Edge> currVertex;
+        // will allow constant time get operation
+        ArrayList<HashSet<Edge>> aGraph = new ArrayList<HashSet<Edge>>(graph);
 
         for (int i = 0; i < graph.size(); i++) {
             currVertex = graph.get(i);
