@@ -189,7 +189,7 @@ public class Blossom {
                     wCopy = parent;
                 }
                 blossomVs.add(stem);
-                blossomEs.add(e); // v---w
+                blossomEs.add(e); // v----w
 
                 // make map that will store blossom vs mapped to their nbrs in the blossom
                 for (Edge be : blossomEs) {
@@ -573,7 +573,7 @@ public class Blossom {
                         int currV = starter;
 
                         for (int startNbr : blossomMap.get(starter)) {
-                            Edge startEdge = new Edge(starter, startNbr);
+                            Edge startEdge = new Edge(starter, startNbr,1);
                             if (wantMatched != (m.contains(startEdge) || m.contains(startEdge.rev()))) {
                                 continue;
                             }
@@ -597,8 +597,8 @@ public class Blossom {
                                 }
 
                                 LinkedList<Integer> currVNbrs = blossomMap.get(currV);
-                                Edge vNbr1 = new Edge(currV, currVNbrs.get(0));
-                                Edge vNbr2 = new Edge(currV, currVNbrs.get(1));
+                                Edge vNbr1 = new Edge(currV, currVNbrs.get(0),1);
+                                Edge vNbr2 = new Edge(currV, currVNbrs.get(1),1);
 
                                 if (wantMatched == (m.contains(vNbr1) || m.contains(vNbr1.rev()))) {
                                     currV = vNbr1.v2();
@@ -733,5 +733,6 @@ public class Blossom {
         // int bSize = bMatching.size();
         // System.out.println("HK and Blossom found same size matching?");
         // System.out.println(hkSize == bSize);
+
     }
 }
