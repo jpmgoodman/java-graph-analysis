@@ -128,6 +128,63 @@ public class RandomGraph {
         return new Graph(Graph.adjListsToAdjMatrix(graph));
     }
 
+    // get random general graph with n vertices and m edges,
+    // and a perfect matching planted
+    public static Graph getPerfectGeneral(int n, int m) {
+        if (n % 2 == 1) {
+            throw new IllegalArgumentException("Cannot have a PM on odd num of vertices");
+        }
+        if (m < n/2) {
+            throw new IllegalArgumentException("Cannot have a PM with less than n/2 edges");
+        }
+
+        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
+        Random random = new Random();
+
+        for (int i = 0; i < n; i++) {
+            graph.add(new HashSet<Edge>());
+        }
+
+        boolean[] matched = new boolean[n];
+        int numMatched = 0;
+
+        // continue to match 2 random vertices until perfect matching
+        while (numMatched < n) {
+            int u = random.nextInt(n);
+            int v = random.nextInt(n);
+            if ((u == v) || matched[u] || matched[v]) continue;
+
+            matched[u] = true;
+            matched[v] = true;
+            graph.get(u).add(new Edge(u,v,1));
+            graph.get(v).add(new Edge(v,u,1));
+            numMatched += 2;
+        }
+
+        // obscure perfect matching by adding m - (n/2) edges
+        for (int remEdges = m - (n/2); remEdges > 0; remEdges--) {
+            int u = random.nextInt(n);
+            int v = random.nextInt(n);
+            if ((u == v) || graph.get(u).contains(v)) continue;
+
+            graph.get(u).add(new Edge(u,v,1));
+            graph.get(v).add(new Edge(v,u,1));
+        }
+
+        return new Graph(Graph.adjListsToAdjMatrix(graph));
+    }
+
+    // get perfect general that has a guaranteed odd cycle
+    // that is, get a perfect general graph that is nonbipartite
+    public static Graph getPerfectNonbipartite(int n, int m) {
+        Graph g = getPerfectGeneral(n,m);
+        while (g.getBipartitions() != null) {
+            g = getPerfectGeneral(n,m);
+        }
+
+        return g;
+    }
+
     // does vertex v have vertex u as a neighbor?
     private static boolean hasNbr(HashSet<Edge> v, int u) {
         for (Edge e : v) {

@@ -708,8 +708,10 @@ public class Blossom {
         }
         else if (args.length == 2) {
             int n = Integer.parseInt(args[0]);
-            double p = Double.parseDouble(args[1]);
-            g = RandomGraph.getPerfectBipartite(n, p);
+            int m = Integer.parseInt(args[1]);
+            g = RandomGraph.getPerfectNonbipartite(n, m);
+            System.out.println(g);
+            return;
         }
         else {
             System.out.println("Please pipe in graph or enter number of " +
