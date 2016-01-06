@@ -12,12 +12,14 @@ public class Blossom {
     private Graph graph;
     private int[] vertexMatches;
     private int numContractions;
+    private int infloop;
 
     // run Edmond's blossom algorithm for maximum matchings in a general graph
     public Blossom(Graph g) {
         this.graph = g;
         this.maxMatching = new HashSet<Edge>();
         this.numContractions = 0;
+        this.infloop = 0;
         updateMatchedVertices();
 
         // find and set maxMatching
@@ -276,6 +278,7 @@ public class Blossom {
 
                 HashSet<Edge> sAugPath = getAugPath(_g, _m);
                 System.out.println("GOT PATH FROM BELOW");
+                System.out.println("infloop ct: " + infloop);
                 System.out.println("sAugPath: " + sAugPath);
                 // if (sAugPath.contains(new Edge(7,8,1)));
                 // System.out.println("from graph");
@@ -414,8 +417,8 @@ public class Blossom {
                                     for (Edge e_star : augMaybe) {
                                         liftedPath.add(e_star);
                                     }
-                                    // System.out.println("about to return lifted path...");
-                                    // System.out.println(liftedPath);
+                                    liftedPath.add(new Edge(lastKnown, mv, 1));
+                                    System.out.println("SUCCESSSS");
                                     return liftedPath;
                                 }
                                 else if (wantMatched == (m.contains(mvNbr1) || m.contains(mvNbr1.rev()))) {
@@ -430,17 +433,17 @@ public class Blossom {
 
                                 }
                                 else {
-                                    System.out.println("NO DIRECTION HUH???");
+                                    System.out.println("NO DIRECTION ???");
                                     break; // could not find pleasing direction to travel
                                 }
                                 // starting to revisit vertices
                                 if (currV == mv) {
-                                    // System.out.println("REVISIT");
+                                    System.out.println("REVISIT");
                                     break;
                                 }
                                 wantMatched = !wantMatched;
                             }
-                            // throw new RuntimeException("This line of code should never be reached");
+                            throw new RuntimeException("This line of code should never be reached");
                         }
                         // System.out.println("here");
                         // System.out.println("curr lifted path");
@@ -456,6 +459,7 @@ public class Blossom {
                         int currV = stem;
                         // continue until we reach a free vertex
                         while (matches[currV] != -1) {
+                            System.out.println("AHHH");
                             LinkedList<Integer> nextVs = blossomMap.get(currV);
                             Edge nbr1 = new Edge(currV,nextVs.get(0),1);
                             Edge nbr2 = new Edge(currV, nextVs.get(1),1);
@@ -524,7 +528,9 @@ public class Blossom {
                                 if (matches[currV] == -1) {
                                     for (Edge e_star : augMaybe) {
                                         liftedPath.add(e_star);
+                                        System.out.println("AHHHHHHH");
                                     }
+                                    liftedPath.add(new Edge(lastKnown, mv, 1));
                                     return liftedPath;
                                 }
                                 else if (wantMatched == (m.contains(mvNbr1) || m.contains(mvNbr1.rev()))) {
