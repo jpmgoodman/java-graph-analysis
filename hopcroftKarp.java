@@ -4,7 +4,6 @@
 *
 * Author: Jesse Goodman
 *
-* Prove max matching by seeing if there are no aug paths left.
 ******************************************************************************/
 import java.util.*;
 
@@ -434,7 +433,7 @@ public class HopcroftKarp {
         long time = (end - start)/1000000;
 
         System.out.println(hk);
-        // System.out.println("ghats made: " + hk.getNumGHatsMade());
-        // System.out.println("time: " + time + " ms");
+        System.out.println("ghats made: " + hk.getNumGHatsMade());
+        System.out.println("time: " + time + " ms");
     }
 }
