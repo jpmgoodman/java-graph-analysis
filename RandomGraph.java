@@ -185,6 +185,26 @@ public class RandomGraph {
         return g;
     }
 
+    // generate complete graph on n vertices
+    public static Graph getComplete(int n) {
+        if (n < 1) {
+            throw new IllegalArgumentException("n must be > 0");
+        }
+
+        ArrayList<HashSet<Edge>> graph = new ArrayList<HashSet<Edge>>();
+
+        for (int i = 0; i < n; i++) {
+            HashSet<Edge> vertex = new HashSet<Edge>();
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+                vertex.add(new Edge(i,j));
+            }
+            graph.add(vertex);
+        }
+
+        return new Graph(Graph.adjListsToAdjMatrix(graph));
+    }
+
     // does vertex v have vertex u as a neighbor?
     private static boolean hasNbr(HashSet<Edge> v, int u) {
         for (Edge e : v) {
