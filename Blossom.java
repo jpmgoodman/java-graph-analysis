@@ -278,7 +278,6 @@ public class Blossom {
 
                 HashSet<Edge> sAugPath = getAugPath(_g, _m);
                 System.out.println("GOT PATH FROM BELOW");
-                System.out.println("infloop ct: " + infloop);
                 System.out.println("sAugPath: " + sAugPath);
                 // if (sAugPath.contains(new Edge(7,8,1)));
                 // System.out.println("from graph");
@@ -288,86 +287,132 @@ public class Blossom {
 
                 /* LIFT AUG PATH */
                 HashSet<Edge> liftedPath = new HashSet<Edge>();
-                // edges in and out of stem.
-                Edge in = null;
-                Edge out = null;
+                // // edges in and out of stem.
+                // Edge in = null;
+                // Edge out = null;
 
+                LinkedList<Edge> stemEdges = new LinkedList<Edge>();
+
+                //
+                // for (Edge ape : sAugPath) {
+                //     if (ape.v2() == stem) {
+                //         if (in == null) {
+                //             in = ape;
+                //         }
+                //         else {
+                //             out = ape;
+                //         }
+                //     }
+                //     else if (ape.v1() == stem) {
+                //         if (out == null) {
+                //             out = ape;
+                //         }
+                //         else {
+                //             in = ape;
+                //         }
+                //     }
+                //     else {
+                //         liftedPath.add(ape);
+                //     }
+                // }
 
                 for (Edge ape : sAugPath) {
-                    if (ape.v2() == stem) {
-                        in = ape;
-                    }
-                    else if (ape.v1() == stem) {
-                        out = ape;
+                    if (ape.v1() == stem || ape.v2() == stem) {
+                        stemEdges.add(ape);
                     }
                     else {
                         liftedPath.add(ape);
-                        System.out.println("add: " + ape);
                     }
                 }
 
-                System.out.println("in: " + in);
-                System.out.println("out: " + out);
+
 
 
                 HashSet<Edge> origEdges = g.getEdges();
                 // System.out.println(origEdges);
 
-                if (in == null && out == null) {
+                if (stemEdges.size() == 0) {
                     return sAugPath;
                 }
 
+                if (stemEdges.size() == 2) {
+                    Edge stem1 = stemEdges.get(0);
+                    Edge stem2 = stemEdges.get(1);
 
-                if ( in != null && out != null &&
-                (origEdges.contains(in) || origEdges.contains(in.rev())) &&
-                (origEdges.contains(out) || origEdges.contains(out.rev())) )
-                {
-                    return sAugPath; // recursive aug path doesn't pass thru blossom
+                    if (origEdges.contains(stem1) || origEdges.contains(stem1.rev())) {
+                        if (origEdges.contains(stem2) || origEdges.contains(stem2.rev())) {
+                            return sAugPath;
+                        }
+                    }
                 }
 
-                // either in or out is null at this point
 
                 boolean wantMatched = false; // do we want the next edge in our aug path to be matched?
 
                 // blossom is at one end of aug path.
-                if (in == null) {
-                    if (origEdges.contains(out) || origEdges.contains(out.rev())) {
-                        wantMatched = !(m.contains(out) || m.contains(out.rev()));
-                        liftedPath.add(out);
+                if (stemEdges.size() == 1) {
+                    Edge stemEdge = stemEdges.get(0);
+
+                    if (origEdges.contains(stemEdge) || origEdges.contains(stemEdge.rev())) {
+
+                        wantMatched = !(m.contains(stemEdge) || m.contains(stemEdge.rev()));
+
+                        // System.out.println("initialize: " + wantMatched);
+                        // System.out.println("blossomvs");
+                        // System.out.println(blossomVs);
+                        // System.out.println(blossomEs);
+                        // int matchCt = 0;
+                        // for (Edge blosse : blossomEs) {
+                        //     if (m.contains(blosse) || m.contains(blosse.rev())) {
+                        //         matchCt++;
+                        //     }
+                        // }
+                        // System.out.println("matchCt: " + matchCt);
+                        // System.out.println("stem: " + stem);
+                        // System.out.println(m.contains(out) || m.contains(out.rev()));
+                        // System.out.println(_g);
+                        // System.out.println("Matching");
+                        // System.out.println(_m);
+                        // System.out.println("aug path given");
+                        // System.out.println(sAugPath);
+
+                        liftedPath.add(stemEdge);
                         int currV = stem;
                         // continue until we reach a free vertex
+                        // should never reach this, because this means that an aug path ends with a matched vertex
                         while (matches[currV] != -1) {
-                            LinkedList<Integer> nextVs = blossomMap.get(currV);
-                            Edge nbr1 = new Edge(currV,nextVs.get(0),1);
-                            Edge nbr2 = new Edge(currV, nextVs.get(1),1);
-
-                            if (wantMatched) {
-                                if (!m.contains(nbr1) && !m.contains(nbr1.rev())) {
-                                    // continue to nbr2, assumedly along matched edge
-                                    liftedPath.add(nbr2);
-                                    currV = nbr2.v2();
-                                }
-                                else {
-                                    // continue to nbr1, assumedly along matched edge
-                                    liftedPath.add(nbr1);
-                                    currV = nbr1.v2();
-                                }
-
-                            }
-                            else {
-                                if (m.contains(nbr1) || m.contains(nbr1.rev())) {
-                                    // containue to nbr2, assumedly along unmatched edge
-                                    liftedPath.add(nbr2);
-                                    currV = nbr2.v2();
-                                }
-                                else {
-                                    // continue to nbr1, assumedly along unmatched edge
-                                    liftedPath.add(nbr1);
-                                    currV = nbr1.v2();
-                                }
-                            }
-
-                            wantMatched = !wantMatched; // alternate path
+                            throw new IllegalStateException("Recursive call returned an invalid aug path");
+                            // LinkedList<Integer> nextVs = blossomMap.get(currV);
+                            // Edge nbr1 = new Edge(currV,nextVs.get(0),1);
+                            // Edge nbr2 = new Edge(currV, nextVs.get(1),1);
+                            //
+                            // if (wantMatched) {
+                            //     if (!m.contains(nbr1) && !m.contains(nbr1.rev())) {
+                            //         // continue to nbr2, assumedly along matched edge
+                            //         liftedPath.add(nbr2);
+                            //         currV = nbr2.v2();
+                            //     }
+                            //     else {
+                            //         // continue to nbr1, assumedly along matched edge
+                            //         liftedPath.add(nbr1);
+                            //         currV = nbr1.v2();
+                            //     }
+                            //
+                            // }
+                            // else {
+                            //     if (m.contains(nbr1) || m.contains(nbr1.rev())) {
+                            //         // containue to nbr2, assumedly along unmatched edge
+                            //         liftedPath.add(nbr2);
+                            //         currV = nbr2.v2();
+                            //     }
+                            //     else {
+                            //         // continue to nbr1, assumedly along unmatched edge
+                            //         liftedPath.add(nbr1);
+                            //         currV = nbr1.v2();
+                            //     }
+                            // }
+                            //
+                            // wantMatched = !wantMatched; // alternate path
                         }
 
                     }
@@ -375,7 +420,7 @@ public class Blossom {
                         // System.out.println("blossomMap");
                         // System.out.println(blossomMap);
 
-                        int lastKnown = out.v2();
+                        int lastKnown = stem == stemEdge.v2() ? stemEdge.v1() : stemEdge.v2();
 
                         // System.out.println("last known");
                         // System.out.println(lastKnown);
@@ -451,118 +496,125 @@ public class Blossom {
                     }
                 }
                 // blossom is at other end of aug path
-                else if (out == null) {
-                    // System.out.println("AHHHHHHHHHHHH");
-                    if (origEdges.contains(in) || origEdges.contains(in.rev())) {
-                        wantMatched = !(m.contains(in) || m.contains(in.rev()));
-                        liftedPath.add(in);
-                        int currV = stem;
-                        // continue until we reach a free vertex
-                        while (matches[currV] != -1) {
-                            System.out.println("AHHH");
-                            LinkedList<Integer> nextVs = blossomMap.get(currV);
-                            Edge nbr1 = new Edge(currV,nextVs.get(0),1);
-                            Edge nbr2 = new Edge(currV, nextVs.get(1),1);
-
-                            if (wantMatched) {
-                                if (!m.contains(nbr1) && !m.contains(nbr1.rev())) {
-                                    // continue to nbr2, assumedly along matched edge
-                                    liftedPath.add(nbr2);
-                                    currV = nbr2.v2();
-                                }
-                                else {
-                                    // continue to nbr1, assumedly along matched edge
-                                    liftedPath.add(nbr1);
-                                    currV = nbr1.v2();
-                                }
-
-                            }
-                            else {
-                                if (m.contains(nbr1) || m.contains(nbr1.rev())) {
-                                    // containue to nbr2, assumedly along unmatched edge
-                                    liftedPath.add(nbr2);
-                                    currV = nbr2.v2();
-                                }
-                                else {
-                                    // continue to nbr1, assumedly along unmatched edge
-                                    liftedPath.add(nbr1);
-                                    currV = nbr1.v2();
-                                }
-                            }
-
-                            wantMatched = !wantMatched; // alternate path
-                        }
-                    }
-                    else {
-                        int lastKnown = in.v1();
-                        // out: stem ---- v2 not in original graph
-                        for (Edge sE : sAugPath) {
-                            Edge target = null;
-                            if (sE.v1() == lastKnown || sE.v2() == lastKnown) {
-                                wantMatched = !(m.contains(sE) || m.contains(sE.rev()));
-                            }
-                        }
-
-                        LinkedList<Integer> maybes = new LinkedList<Integer>();
-                        // find vertex that stem was actually representing
-                        for (int bv : blossomVs) {
-                            Edge testE = new Edge(bv,lastKnown,1);
-                            if (origEdges.contains(testE) || origEdges.contains(testE.rev())) {
-                                if (wantMatched == (m.contains(testE) || m.contains(testE.rev()))) {
-                                    maybes.add(bv);
-                                }
-                            }
-                        }
-
-                        wantMatched = !wantMatched;
-
-                        for (int mv : maybes) {
-                            HashSet<Edge> augMaybe = new HashSet<Edge>();
-                            int currV = mv;
-
-                            while (true) {
-                                LinkedList<Integer> mvNbrs = blossomMap.get(currV);
-                                Edge mvNbr1 = new Edge(currV, mvNbrs.get(0), 1);
-                                Edge mvNbr2 = new Edge(currV, mvNbrs.get(1), 1);
-                                // success!
-                                if (matches[currV] == -1) {
-                                    for (Edge e_star : augMaybe) {
-                                        liftedPath.add(e_star);
-                                        System.out.println("AHHHHHHH");
-                                    }
-                                    liftedPath.add(new Edge(lastKnown, mv, 1));
-                                    return liftedPath;
-                                }
-                                else if (wantMatched == (m.contains(mvNbr1) || m.contains(mvNbr1.rev()))) {
-                                    currV = mvNbr1.v2();
-                                    augMaybe.add(mvNbr1);
-                                }
-                                else if (wantMatched == (m.contains(mvNbr2) || m.contains(mvNbr2.rev()))) {
-                                    currV = mvNbr2.v2();
-                                    augMaybe.add(mvNbr2);
-                                }
-                                else {
-                                    break; // could not find pleasing direction to travel
-                                }
-                                // starting to revisit vertices
-                                if (currV == mv) {
-                                    break;
-                                }
-                                wantMatched = !wantMatched;
-                            }
-                            throw new RuntimeException("This line of code should never be reached");
-                        }
-
-                    }
-                }
+                // else if (out == null) {
+                //     if (origEdges.contains(in) || origEdges.contains(in.rev())) {
+                //         wantMatched = !(m.contains(in) || m.contains(in.rev()));
+                //         liftedPath.add(in);
+                //         int currV = stem;
+                //         // continue until we reach a free vertex
+                //         while (matches[currV] != -1) {
+                //             System.out.println("AHHH");
+                //             LinkedList<Integer> nextVs = blossomMap.get(currV);
+                //             Edge nbr1 = new Edge(currV,nextVs.get(0),1);
+                //             Edge nbr2 = new Edge(currV, nextVs.get(1),1);
+                //
+                //             if (wantMatched) {
+                //                 if (!m.contains(nbr1) && !m.contains(nbr1.rev())) {
+                //                     // continue to nbr2, assumedly along matched edge
+                //                     liftedPath.add(nbr2);
+                //                     currV = nbr2.v2();
+                //                 }
+                //                 else {
+                //                     // continue to nbr1, assumedly along matched edge
+                //                     liftedPath.add(nbr1);
+                //                     currV = nbr1.v2();
+                //                 }
+                //
+                //             }
+                //             else {
+                //                 if (m.contains(nbr1) || m.contains(nbr1.rev())) {
+                //                     // containue to nbr2, assumedly along unmatched edge
+                //                     liftedPath.add(nbr2);
+                //                     currV = nbr2.v2();
+                //                 }
+                //                 else {
+                //                     // continue to nbr1, assumedly along unmatched edge
+                //                     liftedPath.add(nbr1);
+                //                     currV = nbr1.v2();
+                //                 }
+                //             }
+                //
+                //             wantMatched = !wantMatched; // alternate path
+                //         }
+                //     }
+                //     else {
+                //         int lastKnown = in.v1();
+                //         // out: stem ---- v2 not in original graph
+                //         for (Edge sE : sAugPath) {
+                //             Edge target = null;
+                //             if (sE.v1() == lastKnown || sE.v2() == lastKnown) {
+                //                 wantMatched = !(m.contains(sE) || m.contains(sE.rev()));
+                //             }
+                //         }
+                //
+                //         LinkedList<Integer> maybes = new LinkedList<Integer>();
+                //         // find vertex that stem was actually representing
+                //         for (int bv : blossomVs) {
+                //             Edge testE = new Edge(bv,lastKnown,1);
+                //             if (origEdges.contains(testE) || origEdges.contains(testE.rev())) {
+                //                 if (wantMatched == (m.contains(testE) || m.contains(testE.rev()))) {
+                //                     maybes.add(bv);
+                //                 }
+                //             }
+                //         }
+                //
+                //         wantMatched = !wantMatched;
+                //
+                //         for (int mv : maybes) {
+                //             HashSet<Edge> augMaybe = new HashSet<Edge>();
+                //             int currV = mv;
+                //
+                //             while (true) {
+                //                 LinkedList<Integer> mvNbrs = blossomMap.get(currV);
+                //                 Edge mvNbr1 = new Edge(currV, mvNbrs.get(0), 1);
+                //                 Edge mvNbr2 = new Edge(currV, mvNbrs.get(1), 1);
+                //                 // success!
+                //                 if (matches[currV] == -1) {
+                //                     for (Edge e_star : augMaybe) {
+                //                         liftedPath.add(e_star);
+                //                         System.out.println("AHHHHHHH");
+                //                     }
+                //                     liftedPath.add(new Edge(lastKnown, mv, 1));
+                //                     return liftedPath;
+                //                 }
+                //                 else if (wantMatched == (m.contains(mvNbr1) || m.contains(mvNbr1.rev()))) {
+                //                     currV = mvNbr1.v2();
+                //                     augMaybe.add(mvNbr1);
+                //                 }
+                //                 else if (wantMatched == (m.contains(mvNbr2) || m.contains(mvNbr2.rev()))) {
+                //                     currV = mvNbr2.v2();
+                //                     augMaybe.add(mvNbr2);
+                //                 }
+                //                 else {
+                //                     break; // could not find pleasing direction to travel
+                //                 }
+                //                 // starting to revisit vertices
+                //                 if (currV == mv) {
+                //                     break;
+                //                 }
+                //                 wantMatched = !wantMatched;
+                //             }
+                //             throw new RuntimeException("This line of code should never be reached");
+                //         }
+                //
+                //     }
+                // }
                 // blossom is in middle of aug path
                 else {
+                    Edge stemEdge1 = stemEdges.get(0);
+                    Edge stemEdge2 = stemEdges.get(1);
                     System.out.println("MIDDDDDDDLEE????");
-                    int left = in.v1();
+
+                    // int left = in.v1();
+                    int left = stem == stemEdge1.v1() ? stemEdge1.v2() : stemEdge1.v1();
+
+
                     System.out.println("left: " + left);
-                    int right = out.v2();
+                    // int right = out.v2();
+                    int right = stem == stemEdge2.v1() ? stemEdge2.v2() : stemEdge2.v1();
                     System.out.println("right: " + right);
-                    boolean inMatched = _m.contains(in) || _m.contains(in.rev());
+
+                    boolean inMatched = _m.contains(stemEdge1) || _m.contains(stemEdge1.rev());
 
                     // aug path in blossom starts at some starter, ands at some ender
                     HashSet<Integer> starters = new HashSet<Integer>();
@@ -657,11 +709,10 @@ public class Blossom {
                         wantMatched = !wantMatched;
                     }
                 }
-                // System.out.println("RETURNING!!");
                 return liftedPath;
             }
         }
-        // System.out.println("RETURNING THIS: " + augPath);
+        // System.out.println("RETURNED THIS: " + augPath);
         return augPath;
     }
 
@@ -755,7 +806,7 @@ public class Blossom {
             return;
         }
 
-        // System.out.println("testing on the following graph: " + g);
+        System.out.println("testing on the following graph: " + g);
         Blossom blossom = new Blossom(g);
         System.out.println(blossom);
         // HopcroftKarp hk = new HopcroftKarp(g);
