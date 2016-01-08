@@ -604,6 +604,7 @@ public class Blossom {
                     Edge stemEdge1 = stemEdges.get(0);
                     Edge stemEdge2 = stemEdges.get(1);
                     System.out.println("MIDDDDDDDLEE????");
+                    System.out.println("chuck");
 
                     // int left = in.v1();
                     int left = stem == stemEdge1.v1() ? stemEdge1.v2() : stemEdge1.v1();
@@ -615,12 +616,14 @@ public class Blossom {
                     System.out.println("right: " + right);
 
                     boolean inMatched = _m.contains(stemEdge1) || _m.contains(stemEdge1.rev());
+                    System.out.println(stemEdge1);
 
                     // aug path in blossom starts at some starter, ands at some ender
                     HashSet<Integer> starters = new HashSet<Integer>();
                     HashSet<Integer> enders = new HashSet<Integer>();
 
-                    wantMatched = !inMatched;
+
+                    System.out.println("wantmatched: " + wantMatched);
 
                     // potential starter (ps) criteria:
                     // matching from left to ps
@@ -650,12 +653,18 @@ public class Blossom {
                     System.out.println(enders);
 
                     for (int starter : starters) {
-                        HashSet<Edge> augMaybe = new HashSet<Edge>();
+
                         int currV = starter;
 
                         for (int startNbr : blossomMap.get(starter)) {
+                            wantMatched = !inMatched;
+                            System.out.println("YOOOOOOO");
+                            System.out.println(startNbr);
+                            System.out.println(wantMatched);
+                            HashSet<Edge> augMaybe = new HashSet<Edge>();
                             Edge startEdge = new Edge(starter, startNbr,1);
                             if (wantMatched != (m.contains(startEdge) || m.contains(startEdge.rev()))) {
+                                System.out.println("uh oh");
                                 continue;
                             }
 
@@ -671,14 +680,14 @@ public class Blossom {
                                 if (enders.contains(currV) && (wantMatched != inMatched)) {
                                     for (Edge eam : augMaybe) {
                                         liftedPath.add(eam);
-                                        // return liftedPath;
                                     }
                                     liftedPath.add(new Edge(left, starter, 1));
                                     liftedPath.add(new Edge(currV, right, 1));
                                     return liftedPath;
                                 }
-
+                                System.out.println("yo");
                                 if (currV == starter) {
+                                    System.out.println("CYCLE??");
                                     break; // cycled
                                 }
 
