@@ -18,12 +18,18 @@ Given the adjacency matrix of a simple graph as input, this library has the foll
 * Determine size of max cardinality matching (Hopcroft-Karp implementation)
 * Determine edge set of max cardinality matching (Hopcroft-Karp implementation)
 
+**General, Non-Bipartite graphs**
+* Determine size of max cardinality matching (Edmonds' Blossom implementation)
+* Determine edge set of max cardinality matching (Edmonds' Blossom implementation)
+
 The library contains the following classes:
 * Graph (representation of a graph)
 * Edge (representation of an edge in the graph)
 * DFS (depth first search)
 * HopcroftKarp (custom implementation of the Hopcroft-Karp algorithm)
+* Blossom (custom implementation of Edmonds' blossom algorithm)
 * RandomGraph (random graph generator)
+* DisjointSet (disjoint set data structure)
 
 Currently, the graph has two instance variables that represent it: (1) an
 adjacency matrix, and (2) an ArrayList of ArrayLists of Edge objects. At this
