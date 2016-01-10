@@ -177,6 +177,11 @@ public class RandomGraph {
     // get perfect general that has a guaranteed odd cycle
     // that is, get a perfect general graph that is nonbipartite
     public static Graph getPerfectNonbipartite(int n, int m) {
+        // nonbipartite with perfect matching not possible
+        if (n < 4 || m < 4) {
+            throw new IllegalArgumentException("Non-bipartite graph with"
+             + " perfect matching not possible for given parameters");
+        }
         Graph g = getPerfectGeneral(n,m);
         while (g.getBipartitions() != null) {
             g = getPerfectGeneral(n,m);

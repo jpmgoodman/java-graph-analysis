@@ -591,6 +591,37 @@ public class Blossom {
         return rtnStr;
     }
 
+
+    // run time trials on Blossom alg
+    public static void runTimeTrials() {
+        // average degree of a vertex is n/2
+        long start, end, runtime;
+
+        for (int n = 0; n <= 500; n += 10) {
+            int m = (n*n) / 4; // set avg degree of vertex to n/2
+            runtime = 0;
+            for (int i = 0; i < 100; i++) {
+                System.out.println("n: " + n + ", i: " + i);
+
+                Graph g;
+                if (n < 4 || m < 4) {
+                    g = RandomGraph.getPerfectGeneral(n, m);
+                }
+                else {
+                    g = RandomGraph.getPerfectNonbipartite(n, m);
+                }
+
+                start = System.nanoTime();
+                Blossom b = new Blossom(g);
+                end = System.nanoTime();
+                runtime += (end - start)/1000000;
+
+            }
+            runtime /= 100;
+            System.out.println("avg runtime for n = " + n + ", m = " + m + " is: " + runtime + "ms");
+        }
+    }
+
     public static void main(String[] args) {
         Graph g;
 
@@ -602,9 +633,10 @@ public class Blossom {
             int k = Integer.parseInt(args[0]); // how many graphs to test blossom on
             for (int i = 0; i < k; i++) {
                 System.out.print("Test " + (i+1) + ": ");
-                int n = 100;
-                int m = 1000;
+                int n = 500;
+                int m = 62500;
                 g = RandomGraph.getPerfectNonbipartite(n, m);
+                System.out.println("done creating graph");
                 Blossom b = new Blossom(g);
                 if (b.getMaxMatchingSize() != n/2) {
                     throw new IllegalStateException("Blossom alg failed - did not find perfect matching.");
@@ -624,6 +656,8 @@ public class Blossom {
             "vertices and probability of including edges.");
             return;
         }
+
+        // runTimeTrials();
 
         // System.out.println("testing on the following graph: \n" + g);
         Blossom blossom = new Blossom(g);

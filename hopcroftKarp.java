@@ -409,12 +409,49 @@ public class HopcroftKarp {
         "--------------------------------------------------";
     }
 
+    // run time trials on HK alg, using probability p for edge existence
+    public static void runTimeTrials(double p) {
+        long start, end, runtime;
+
+        for (int n = 0; n <= 1600; n+= 100) {
+            runtime = 0;
+            for (int i = 0; i < 100; i++) {
+                System.out.println("n: " + n + ", i: " + i);
+                Graph g = RandomGraph.getPerfectBipartite(n, p);
+                start = System.nanoTime();
+                HopcroftKarp hk = new HopcroftKarp(g);
+                end = System.nanoTime();
+                runtime += (end - start)/1000000;
+
+            }
+            runtime /= 100;
+            System.out.println("avg runtime for n = " + n + ": " + runtime + "ms");
+        }
+    }
+
     // unit testing
     public static void main(String[] args) {
         Graph g;
 
         if (args.length == 0) {
             g = new Graph(Graph.loadMatrixFromStdIn());
+        }
+        else if (args.length == 1) {
+            // TESTING MODE!
+            int k = Integer.parseInt(args[0]); // how many graphs to test HK on
+            for (int i = 0; i < k; i++) {
+                System.out.print("Test " + (i+1) + ": ");
+                int n = 500;
+                double p = 0.5;
+                g = RandomGraph.getPerfectBipartite(n, p);
+                HopcroftKarp hk = new HopcroftKarp(g);
+                if (hk.getMaxMatchingSize() != n/2) {
+                    throw new IllegalStateException("HK alg failed - did not find perfect matching.");
+                }
+                System.out.println("passed!");
+            }
+            System.out.println("All tests passed!");
+            return;
         }
         else if (args.length == 2) {
             int n = Integer.parseInt(args[0]);
@@ -426,6 +463,8 @@ public class HopcroftKarp {
             "vertices and probability of including edges.");
             return;
         }
+
+        // HopcroftKarp.runTimeTrials(0.5);
 
         long start = System.nanoTime();
         HopcroftKarp hk = new HopcroftKarp(g);
