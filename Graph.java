@@ -48,6 +48,106 @@ public class Graph {
         }
     }
 
+    // Checks if there exists a matching that covers all max degree vertices.
+    // Double number of vertices in graph; make all new vertices pw complete
+    // make all new vertices complete to all non-max degree vertices
+    // Exists a PM in this new graph IFF exists a delta hitting matching in original
+    public boolean HasDeltaHittingMatching() {
+        int maxDegree = this.getMaxDegree();
+
+        // new graph has double length
+        int[][] extendedArray = new int[2*this.numVertices][2*this.numVertices];
+
+        // copy over original graph
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                extendedArray[i][j] = this.adjMatrix[i][j];
+            }
+        }
+
+        // make new vertices all pairwise complete
+        for (int i = numVertices; i < numVertices*2; i++) {
+            for (int j = numVertices; j < numVertices*2; j++) {
+                if (i != j) extendedArray[i][j] = 1;
+            }
+        }
+
+        // make all non-max degree vertices in original graph complete
+        // to new vertices
+        for (int i = 0; i < numVertices; i++) {
+            int degree = 0;
+            for (int j = 0; j < numVertices; j++) {
+                if (extendedArray[i][j] != 0) degree++;
+            }
+            // current vertex does not have max degree
+            // make complete to all new vertices
+            if (degree < maxDegree) {
+                for (int j = numVertices; j < 2*numVertices; j++) {
+                    extendedArray[i][j] = 1;
+                    extendedArray[j][i] = 1;
+                }
+            }
+        }
+
+        Graph extendedGraph = new Graph(extendedArray);
+        Blossom blossom = new Blossom(extendedGraph);
+        return blossom.getMaxMatchingSize() == numVertices;
+    }
+
+    private HashSet<Edge> GetNeighbors(int nodeIndex) {
+        return vertices.get(nodeIndex);
+    }
+
+    // construct and return adjacency matrix of graph complement
+    public int[][] GetGraphComplement() {
+        int[][] complement = new int[this.numVertices][this.numVertices];
+        for (int i = 0; i < this.numVertices; i++) {
+            for (int j = 0; j < this.numVertices; j++) {
+                if (i == j) {
+                    complement[i][j] = 0;
+                } else {
+                    complement[i][j] = this.adjMatrix[i][j] == 0 ? 1 : 0;
+                }
+            }
+        }
+        return complement;
+    }
+
+    // construct and return adjacency matrix of line graph
+    public int[][] GetLineGraph() {
+        int numEdges = this.edges.size();
+        int[][] lineGraph = new int[numEdges][numEdges];
+        HashMap<Edge, Integer> EdgeMapIndex = new HashMap<Edge, Integer>();
+        int u, v;
+        HashSet<Edge> uNbrs, vNbrs;
+        // create map from edge to integer
+        int i = 0;
+        for (Edge e : this.edges) {
+            EdgeMapIndex.put(e, i);
+            i++;
+        }
+        for (Edge e : this.edges) {
+            int edgeIndex = EdgeMapIndex.get(e);
+            u = e.v1();
+            v = e.v2();
+            uNbrs = GetNeighbors(u);
+            vNbrs = GetNeighbors(v);
+            for (Edge f : uNbrs) {
+                int incidentEdgeIndex = EdgeMapIndex.containsKey(f) ?
+                EdgeMapIndex.get(f) : EdgeMapIndex.get(f.rev());
+                if (edgeIndex == incidentEdgeIndex) continue;
+                lineGraph[edgeIndex][incidentEdgeIndex] = 1;
+            }
+            for (Edge f : vNbrs) {
+                int incidentEdgeIndex = EdgeMapIndex.containsKey(f) ?
+                EdgeMapIndex.get(f) : EdgeMapIndex.get(f.rev());
+                if (edgeIndex == incidentEdgeIndex) continue;
+                lineGraph[edgeIndex][incidentEdgeIndex] = 1;
+            }
+        }
+        return lineGraph;
+    }
+
     // convert adj matrix representation of a graph into the adjacency lists
     // representation of a graph
     public static LinkedList<HashSet<Edge>> adjMatrixToAdjLists(int[][] adjMatrix) {
@@ -145,7 +245,7 @@ public class Graph {
 
         for (HashSet<Edge> edgeList : vertices) {
             if (edgeList.size() > maxDegree)
-                maxDegree = edgeList.size();
+            maxDegree = edgeList.size();
         }
 
         return maxDegree;
@@ -457,6 +557,23 @@ public class Graph {
         // RandomGraph rg = new RandomGraph();
 
         Graph g = new Graph(adjMatrix);
+        System.out.println("Does this graph have a matching that covers " +
+            "all max degree vertices?");
+        System.out.println(g.HasDeltaHittingMatching());
+        // Graph gc = new Graph(g.GetGraphComplement());
+        // Graph lg = new Graph(g.GetLineGraph());
+        //
+        // System.out.println("!!!!!!!!!! ORIGINAL GRAPH !!!!!!!!!!");
+        // System.out.println(g);
+        // System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        //System.out.println("!!!!!!!!!! COMPLEMENT GRAPH !!!!!!!!");
+        //System.out.println(gc);
+        //System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        // System.out.println("!!!!!!!!!!!! LINE GRAPH !!!!!!!!!!!!");
+        // System.out.println(lg);
+        // System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         // System.out.println(g);
         // Graph g = rg.getBipartite(Integer.parseInt(args[0]), Double.parseDouble(args[1]));
         // System.out.println("This graph has " + g.getNumVertices() + " vertices.");
@@ -468,7 +585,7 @@ public class Graph {
         // System.out.println("Is there a path between vertex 0 and 4? " + g.existsPath(0,4));
         // System.out.println("Is there a cycle? " + g.hasCycle());
         // for (Edge e : g.getEdges())
-            // System.out.println(e.toString());
+        // System.out.println(e.toString());
 
         // System.out.println(Collections.sort(g.getEdges(), new ArrayList<Edge>()));
 

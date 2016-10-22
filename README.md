@@ -21,6 +21,7 @@ Given the adjacency matrix of a simple graph as input, this library has the foll
 **General, Non-Bipartite graphs**
 * Determine size of max cardinality matching (Edmonds' Blossom implementation)
 * Determine edge set of max cardinality matching (Edmonds' Blossom implementation)
+* Determine if there is a matching that covers all max degree vertices
 
 The library contains the following classes:
 * Graph (representation of a graph)
@@ -39,3 +40,5 @@ much easier to understand, and because the latter implementation facilitates
 
 Note that several test input adjacency matrices are located in the test_input_graphs
 directory. There, you will find several popular graphs.
+
+There is a MatchStudents main that demonstrates a real application of this library: that is, it finds a maximum number of pairs of students that do not know one another, in order to organize a meal event to help students make friends.
